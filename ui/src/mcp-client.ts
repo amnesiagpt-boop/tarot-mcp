@@ -42,9 +42,11 @@ function applyHostContext(app: App): void {
   const context = app.getHostContext();
   document.documentElement.dataset.theme =
     context?.theme === "dark" ? "dark" : "light";
-  document.documentElement.lang = context?.locale?.startsWith("zh")
-    ? "zh"
-    : "en";
+  document.documentElement.lang = context?.locale?.startsWith("ru")
+    ? "ru"
+    : context?.locale?.startsWith("zh")
+      ? "zh"
+      : "en";
   for (const side of ["top", "right", "bottom", "left"] as const) {
     document.documentElement.style.setProperty(
       `--host-safe-area-${side}`,
@@ -71,23 +73,38 @@ function hasCards(value: unknown): boolean {
 
 function readingContinuationText(reading: ModelReadingContext): string {
   const chinese = reading.language === "zh";
+  const russian = reading.language === "ru";
   const lines = [
-    chinese
-      ? "我已在可视化塔罗牌桌中完成选牌。请基于这次已确认的牌面继续解读并回复，不要重新抽牌。"
-      : "I have finished selecting cards in the visual tarot table. Continue the reading from these confirmed cards and reply without drawing again.",
+    russian
+      ? "Я завершил выбор карт за визуальным столом Таро. Продолжи толкование на русском по этим подтверждённым картам, не вытягивая новые."
+      : chinese
+        ? "我已在可视化塔罗牌桌中完成选牌。请基于这次已确认的牌面继续解读并回复，不要重新抽牌。"
+        : "I have finished selecting cards in the visual tarot table. Continue the reading from these confirmed cards and reply without drawing again.",
     "",
-    `${chinese ? "牌阵" : "Spread"}: ${reading.spreadName}`,
+    `${russian ? "Расклад" : chinese ? "牌阵" : "Spread"}: ${reading.spreadName}`,
   ];
   if (reading.question) {
-    lines.push(`${chinese ? "问题" : "Question"}: ${reading.question}`);
+    lines.push(
+      `${russian ? "Вопрос" : chinese ? "问题" : "Question"}: ${reading.question}`,
+    );
   }
-  lines.push(chinese ? "已确认牌面：" : "Confirmed cards:");
+  lines.push(
+    russian
+      ? "Подтверждённые карты:"
+      : chinese
+        ? "已确认牌面："
+        : "Confirmed cards:",
+  );
   reading.cards.forEach((card, index) => {
-    const orientation = chinese
+    const orientation = russian
       ? card.orientation === "reversed"
-        ? "逆位"
-        : "正位"
-      : card.orientation;
+        ? "Перевёрнутое положение"
+        : "Прямое положение"
+      : chinese
+        ? card.orientation === "reversed"
+          ? "逆位"
+          : "正位"
+        : card.orientation;
     const position = card.position ? `${card.position} — ` : "";
     const details = [
       card.keywords?.length ? card.keywords.join(", ") : undefined,
@@ -102,7 +119,7 @@ function readingContinuationText(reading: ModelReadingContext): string {
   if (reading.interpretation) {
     lines.push(
       "",
-      `${chinese ? "已有解读" : "Existing interpretation"}: ${reading.interpretation}`,
+      `${russian ? "Имеющееся толкование" : chinese ? "已有解读" : "Existing interpretation"}: ${reading.interpretation}`,
     );
   }
   return lines.join("\n");

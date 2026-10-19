@@ -70,10 +70,10 @@ export function createApiRouter(tarotServer: TarotServer): Router {
 
   router.get(HTTP_ENDPOINTS.api.spreads, (req, res) => {
     const language = query(req, "language") ?? "en";
-    if (language !== "en" && language !== "zh") {
+    if (language !== "en" && language !== "zh" && language !== "ru") {
       res
         .status(400)
-        .json({ error: 'Invalid language; expected "en" or "zh"' });
+        .json({ error: 'Invalid language; expected "en", "zh" or "ru"' });
       return;
     }
     res.json({ spreads: tarotServer.getAvailableSpreads(language) });

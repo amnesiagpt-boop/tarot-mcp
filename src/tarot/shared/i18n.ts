@@ -36,13 +36,20 @@ const CARD_CATEGORY_NAMES_ZH: Record<CardCategory, string> = {
  */
 
 /** Pick the zh variant when the language is zh and a translation exists. */
-export function pick(language: Language, en: string, zh: string): string {
+export function pick(
+  language: Language,
+  en: string,
+  zh: string,
+  ru?: string,
+): string {
+  if (language === "ru") return ru ?? en;
   return language === "zh" && zh ? zh : en;
 }
 
 /** Localized card name, e.g. "愚者（The Fool）" — the English name stays
  * visible so clients can keep using it as the tool-call identifier. */
 export function localizedCardName(card: TarotCard, language: Language): string {
+  if (language === "ru" && card.ru?.name) return card.ru.name;
   if (language === "zh" && card.zh?.name) {
     return `${card.zh.name}（${card.name}）`;
   }
@@ -54,6 +61,8 @@ export function localizedKeywords(
   orientation: CardOrientation,
   language: Language,
 ): string[] {
+  if (language === "ru" && card.ru?.keywords)
+    return card.ru.keywords[orientation];
   if (language === "zh" && card.zh?.keywords) {
     return card.zh.keywords[orientation];
   }
@@ -65,6 +74,8 @@ export function localizedMeanings(
   orientation: CardOrientation,
   language: Language,
 ): CardMeanings {
+  if (language === "ru" && card.ru?.meanings)
+    return card.ru.meanings[orientation];
   if (language === "zh" && card.zh?.meanings) {
     return card.zh.meanings[orientation];
   }
@@ -75,6 +86,7 @@ export function localizedSymbolism(
   card: TarotCard,
   language: Language,
 ): string[] {
+  if (language === "ru" && card.ru?.symbolism) return card.ru.symbolism;
   if (language === "zh" && card.zh?.symbolism) {
     return card.zh.symbolism;
   }
@@ -85,6 +97,7 @@ export function localizedDescription(
   card: TarotCard,
   language: Language,
 ): string {
+  if (language === "ru" && card.ru?.description) return card.ru.description;
   if (language === "zh" && card.zh?.description) {
     return card.zh.description;
   }
@@ -103,6 +116,17 @@ export function localizedSuit(
   if (language === "en") {
     return suit ?? "N/A";
   }
+  if (language === "ru")
+    return suit
+      ? ((
+          {
+            wands: "Жезлы",
+            cups: "Кубки",
+            swords: "Мечи",
+            pentacles: "Пентакли",
+          } as Record<string, string>
+        )[suit] ?? suit)
+      : "Нет";
   return suit ? (SUIT_NAMES_ZH[suit] ?? suit) : "无";
 }
 
@@ -113,6 +137,17 @@ export function localizedElement(
   if (language === "en") {
     return element ?? "N/A";
   }
+  if (language === "ru")
+    return element
+      ? ((
+          {
+            fire: "Огонь",
+            water: "Вода",
+            air: "Воздух",
+            earth: "Земля",
+          } as Record<string, string>
+        )[element] ?? element)
+      : "Нет";
   return element ? (ELEMENT_NAMES_ZH[element] ?? element) : "无";
 }
 
@@ -120,6 +155,10 @@ export function localizedOrientation(
   orientation: CardOrientation,
   language: Language,
 ): string {
+  if (language === "ru")
+    return orientation === "upright"
+      ? "Прямое положение"
+      : "Перевёрнутое положение";
   if (language === "zh") {
     return orientation === "upright" ? "正位" : "逆位";
   }
@@ -130,8 +169,20 @@ export function localizedCardCategory(
   category: CardCategory,
   language: Language,
 ): string {
+  if (language === "ru")
+    return {
+      all: "Все карты",
+      major_arcana: "Старшие арканы",
+      minor_arcana: "Младшие арканы",
+      wands: "Жезлы",
+      cups: "Кубки",
+      swords: "Мечи",
+      pentacles: "Пентакли",
+    }[category];
   if (language === "zh") {
     return CARD_CATEGORY_NAMES_ZH[category];
   }
-  return category.replace("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  return category
+    .replace("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }

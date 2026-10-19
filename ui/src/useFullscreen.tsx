@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { errorCopy } from "./error-copy.js";
 import { t } from "./i18n.js";
 import type { DrawClient, Language } from "./types.js";
 
@@ -56,7 +57,9 @@ export function FullscreenNotice({
     <div className="error-banner" role="alert">
       <div>
         <strong>{t(language, "fullscreenFailed")}</strong>
-        {detail ? <span>{detail}</span> : null}
+        {detail ? (
+          <span>{errorCopy({ message: detail }, language)}</span>
+        ) : null}
       </div>
     </div>
   );

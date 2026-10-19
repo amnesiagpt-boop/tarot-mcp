@@ -1,8 +1,18 @@
 import { DrawnCard, Language } from "../../shared/types.js";
-import { localizedCardName, localizedMeanings, pick } from "../../shared/i18n.js";
+import {
+  localizedCardName,
+  localizedMeanings,
+  pick,
+} from "../../shared/i18n.js";
 import { orientationLabel } from "../reading-formatter.js";
-import { generateGenericSpreadAnalysis, selectSpreadAnalysis } from "./analyzers.js";
-import { generateOverallInterpretation, selectRelevantMeaning } from "./patterns.js";
+import {
+  generateGenericSpreadAnalysis,
+  selectSpreadAnalysis,
+} from "./analyzers.js";
+import {
+  generateOverallInterpretation,
+  selectRelevantMeaning,
+} from "./patterns.js";
 
 /**
  * Generate the full interpretation for a reading: per-card contextual
@@ -20,6 +30,7 @@ export function generateInterpretation(
     language,
     `This ${spreadName} reading addresses your question: "${question}"\n\n`,
     `这次「${spreadName}」解读回应你的问题：「${question}」\n\n`,
+    `Этот расклад «${spreadName}» отвечает на твой вопрос: «${question}»\n\n`,
   );
 
   // Individual card interpretations with context
@@ -34,6 +45,7 @@ export function generateInterpretation(
       language,
       `**${drawnCard.position}**: `,
       `**${drawnCard.position}**：`,
+      `**${drawnCard.position}**:`,
     );
     interpretation += `${localizedCardName(drawnCard.card, language)}${orientationLabel(drawnCard.orientation, language)}\n`;
 
@@ -42,7 +54,7 @@ export function generateInterpretation(
       meanings,
       drawnCard.position || "General",
       question,
-      drawnCard.positionMeaning
+      drawnCard.positionMeaning,
     );
     interpretation += `${relevantMeaning}\n\n`;
   });

@@ -99,7 +99,9 @@ function isConfirmedReading(value: unknown): value is ConfirmedReading {
     !nonemptyString(value.spreadType) ||
     !nonemptyString(value.spreadName) ||
     typeof value.question !== "string" ||
-    (value.language !== "en" && value.language !== "zh") ||
+    (value.language !== "en" &&
+      value.language !== "zh" &&
+      value.language !== "ru") ||
     !optionalStrings(value, [
       "readingId",
       "sessionId",

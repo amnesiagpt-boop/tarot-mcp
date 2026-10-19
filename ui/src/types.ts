@@ -1,4 +1,4 @@
-export type Language = "en" | "zh";
+export type Language = "en" | "zh" | "ru";
 export type ReadingKind = "spread" | "daily" | "moon" | "custom";
 
 export interface DrawError extends Error {

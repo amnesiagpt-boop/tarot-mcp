@@ -26,10 +26,17 @@ export function SetupShell({
       <RitualProgress current="intention" language={language} />
       <header className="setup-header">
         {client.target === "mcp" ? (
-          <span className="wordmark">Tarot</span>
+          <span className="wordmark">
+            {language === "ru" ? "Таро" : "Tarot"}
+          </span>
         ) : (
-          <a className="wordmark" href="/draw/" aria-label="Tarot">
-            <span aria-hidden="true">✦</span> Tarot
+          <a
+            className="wordmark"
+            href="/draw/"
+            aria-label={language === "ru" ? "Таро" : "Tarot"}
+          >
+            <span aria-hidden="true">✦</span>{" "}
+            {language === "ru" ? "Таро" : "Tarot"}
           </a>
         )}
         <label className="language-picker">
@@ -42,6 +49,7 @@ export function SetupShell({
             }
           >
             <option value="zh">中文</option>
+            <option value="ru">Русский</option>
             <option value="en">English</option>
           </select>
         </label>

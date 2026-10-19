@@ -33,7 +33,10 @@ const REQUIRED_MEANING_FIELDS = [
   "spirituality",
 ] as const;
 
-function orientationText(card: TarotCard, orientation: "upright" | "reversed"): string {
+function orientationText(
+  card: TarotCard,
+  orientation: "upright" | "reversed",
+): string {
   return [
     ...card.keywords[orientation],
     ...Object.values(card.meanings[orientation]),
@@ -66,7 +69,7 @@ describe("tarot card data integrity", () => {
       // "zh" is the optional localization block
       expect(
         Object.keys(card)
-          .filter((key) => key !== "zh")
+          .filter((key) => key !== "zh" && key !== "ru")
           .sort(),
       ).toEqual(
         (card.arcana === "major"
@@ -96,9 +99,9 @@ describe("tarot card data integrity", () => {
         }
 
         for (const field of REQUIRED_MEANING_FIELDS) {
-          expect(card.meanings[orientation][field].length).toBeGreaterThanOrEqual(
-            60,
-          );
+          expect(
+            card.meanings[orientation][field].length,
+          ).toBeGreaterThanOrEqual(60);
         }
       }
     }
@@ -277,7 +280,9 @@ describe("chinese localization data integrity", () => {
     for (const card of cardManager.getAllCards()) {
       for (const orientation of ["upright", "reversed"] as const) {
         for (const field of REQUIRED_MEANING_FIELDS) {
-          expect(card.zh!.meanings![orientation][field]).not.toMatch(mixedWidth);
+          expect(card.zh!.meanings![orientation][field]).not.toMatch(
+            mixedWidth,
+          );
         }
       }
       expect(card.zh!.description!).not.toMatch(mixedWidth);

@@ -6,6 +6,8 @@ import { fisherYatesShuffle } from "../shared/utils.js";
 import { logger } from "../shared/logger.js";
 import { parseCardData } from "./card-schema.js";
 
+import { russianCardLocalization } from "./card-localizations-ru.js";
+
 const CARD_DATA_PATH = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "card-data.json",
@@ -53,6 +55,9 @@ export class TarotCardManager {
       try {
         const data = await fs.readFile(CARD_DATA_PATH, "utf-8");
         const cards = parseCardData(JSON.parse(data));
+        cards.forEach((card) => {
+          card.ru = russianCardLocalization(card);
+        });
         TarotCardManager.instance = new TarotCardManager(cards);
         return TarotCardManager.instance;
       } catch (error) {
@@ -76,6 +81,8 @@ export class TarotCardManager {
       // Lowercase keys keep lookups symmetric with findCard's normalization
       this.cards.set(card.id.toLowerCase(), card);
       this.cardsByName.set(card.name.toLowerCase(), card);
+      if (card.ru?.name)
+        this.cardsByLocalizedName.set(card.ru.name.toLowerCase(), card);
       if (card.zh?.name) {
         this.cardsByLocalizedName.set(card.zh.name.toLowerCase(), card);
         this.cardsByLocalizedName.set(
@@ -102,7 +109,8 @@ export class TarotCardManager {
     for (const c of this.allCards) {
       if (
         c.name.toLowerCase().includes(normalizedIdentifier) ||
-        c.zh?.name?.toLowerCase().includes(normalizedIdentifier)
+        c.zh?.name?.toLowerCase().includes(normalizedIdentifier) ||
+        c.ru?.name?.toLowerCase().includes(normalizedIdentifier)
       ) {
         return c;
       }

@@ -1,0 +1,286 @@
+/* A table has a viewport budget. Keep the deck, positions and actions in
+   that budget; long prose in setup/results remains ordinary scrollable text.
+   vh is the fallback for older Safari; dvh follows its changing browser bars. */
+.draw-app[data-surface="web"] .draw-shell {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) minmax(0, 1.25fr) auto auto;
+  gap: 8px;
+  padding: 12px 20px;
+}
+.draw-shell > .ritual-progress {
+  margin: 0;
+  gap: 6px 18px;
+}
+.draw-shell .draw-header {
+  align-items: center;
+  flex-direction: row;
+  gap: 16px;
+  margin: 0;
+}
+.draw-shell h1 {
+  font-size: clamp(22px, 2.8vw, 34px);
+  margin: 0 0 4px;
+}
+.draw-shell .spread-label {
+  margin: 0 0 4px;
+  font-size: 12px;
+}
+.draw-shell .draw-header p:last-child {
+  margin: 0;
+  font-size: 12px;
+}
+.draw-shell .selection-meter {
+  padding: 0;
+}
+.draw-shell .selection-meter strong {
+  font-size: 30px;
+}
+.draw-shell .selection-meter span {
+  font-size: 12px;
+}
+.draw-shell .staging {
+  min-height: 0;
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 5px;
+}
+.draw-shell .staging__header,
+.draw-shell .deck-section__header {
+  margin: 0;
+  gap: 12px;
+  align-items: center;
+}
+.draw-shell .staging__header h2,
+.draw-shell .deck-section__header h2 {
+  font-size: 15px;
+}
+.draw-shell .staging__header p,
+.draw-shell .deck-section__header p {
+  font-size: 12px;
+}
+.draw-shell .reading-cloth--compact {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: none;
+  aspect-ratio: auto;
+  /* cqh scales only the cards inside this cloth; flight transforms are intact. */
+  container-type: size;
+  --slot-width: 44px;
+  --slot-width: clamp(
+    12px,
+    calc(100cqh / var(--compact-height-ratio, 7)),
+    64px
+  );
+}
+.draw-shell .reading-cloth--compact.reading-cloth--sparse {
+  --slot-width: 54px;
+  --slot-width: clamp(36px, 52cqh, 104px);
+}
+.draw-shell .staging .position-key {
+  width: 100%;
+  min-width: 0;
+  max-height: 58px;
+  overflow-y: auto;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 4px 10px;
+  margin: 0;
+}
+.draw-shell .position-key li {
+  padding: 0;
+  min-width: 0;
+  min-height: 25px;
+}
+.draw-shell .position-key__action {
+  padding-block: 2px;
+  min-height: 25px;
+}
+.draw-shell .deck-section {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 8px 0 0;
+}
+.draw-shell .deck-section__header {
+  padding: 0 12px;
+}
+.draw-shell .arc-fan {
+  height: 100%;
+  min-height: 0;
+  touch-action: pan-x;
+}
+.draw-shell .draw-toolbar {
+  position: static;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+.draw-shell .draw-toolbar p {
+  margin: 0;
+  font-size: 12px;
+}
+.draw-shell .toolbar-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+.draw-shell .primary-action,
+.draw-shell .text-action {
+  min-height: 40px;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+.table-notices:empty {
+  display: none;
+}
+.table-notices .error-banner {
+  margin: 0;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.draw-app[data-surface="web"] .ritual-shell {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
+  gap: 8px;
+  padding: 12px 20px;
+}
+.ritual-shell .ritual-header {
+  max-width: 80ch;
+}
+.ritual-shell .ritual-header h1 {
+  font-size: clamp(24px, 3vw, 36px);
+  margin-bottom: 6px;
+}
+.ritual-shell .ritual-header p {
+  font-size: 13px;
+}
+.ritual-shell .ritual-pile {
+  --pile-w: clamp(72px, calc((100vh - 330px) / 1.5), 188px);
+  --pile-w: clamp(72px, calc((100dvh - 330px) / 1.5), 188px);
+  align-self: center;
+}
+.ritual-shell .ritual-status {
+  margin: 0;
+  font-size: 13px;
+}
+.ritual-shell .ritual-actions {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.ritual-shell .ritual-progress {
+  width: auto;
+}
+
+@media (max-width: 650px) {
+  .draw-app[data-surface="web"] .draw-shell {
+    padding: 10px;
+    gap: 7px;
+    grid-template-rows: auto auto minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  }
+  .draw-shell .draw-header {
+    gap: 6px;
+  }
+  .draw-shell .reading-actions {
+    display: none;
+  }
+  .draw-shell .staging__header p,
+  .draw-shell .deck-section__header p {
+    max-width: 60%;
+    font-size: 11px;
+  }
+  .draw-shell .staging .position-key {
+    grid-template-columns: 1fr;
+    max-height: 86px;
+  }
+  .draw-shell .position-key {
+    font-size: 11px;
+  }
+  .draw-shell .draw-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+  }
+  .draw-shell .toolbar-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .draw-shell .toolbar-actions .primary-action {
+    grid-column: 1 / -1;
+  }
+  .draw-shell .primary-action,
+  .draw-shell .text-action {
+    min-height: 40px;
+  }
+}
+@media (max-height: 460px) and (min-width: 651px) {
+  .draw-shell .ritual-progress,
+  .ritual-shell .ritual-progress {
+    display: none;
+  }
+  .draw-app[data-surface="web"] .draw-shell {
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1.3fr) auto auto;
+    padding-block: 6px;
+    gap: 4px;
+  }
+  .draw-shell .draw-header h1 {
+    font-size: 20px;
+  }
+  .draw-shell .draw-header p:last-child,
+  .draw-shell .staging__header p {
+    display: none;
+  }
+  .draw-shell .staging .position-key {
+    max-height: 28px;
+  }
+  .draw-app[data-surface="web"] .ritual-shell {
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    padding-block: 6px;
+  }
+  .ritual-shell .ritual-header p:not(.spread-label) {
+    display: none;
+  }
+  .ritual-shell .ritual-pile {
+    --pile-w: 68px;
+  }
+}
+
+@media (max-width: 650px) {
+  .draw-shell .position-key li,
+  .draw-shell .position-key__action {
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 6px;
+    align-items: center;
+  }
+  .draw-shell .position-key__name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .draw-shell .staging__header p,
+  .draw-shell .deck-section__header p {
+    max-width: 100%;
+  }
+}
+
+.draw-shell
+  .reading-cloth--compact:not(.reading-cloth--sparse)
+  .staged-card
+  > span {
+  width: min(22px, 100%);
+  right: 0;
+  bottom: 0;
+  font-size: 9px;
+}

@@ -2,11 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { TarotCardManager } from "../cards/card-manager.js";
 import { TarotDomainError } from "../shared/errors.js";
 import { pick } from "../shared/i18n.js";
-import {
-  CardOrientation,
-  Language,
-  TarotSpread,
-} from "../shared/types.js";
+import { CardOrientation, Language, TarotSpread } from "../shared/types.js";
 import { randomOrientation } from "../shared/utils.js";
 import {
   PerformedReading,
@@ -176,8 +172,10 @@ export class VisualDrawManager {
       options.pendingTtlMs ?? VisualDrawManager.DEFAULT_PENDING_TTL_MS;
     this.retentionTtlMs =
       options.retentionTtlMs ?? VisualDrawManager.DEFAULT_RETENTION_TTL_MS;
-    this.maxPending = options.maxPending ?? VisualDrawManager.DEFAULT_MAX_PENDING;
-    this.maxRetained = options.maxRetained ?? VisualDrawManager.DEFAULT_MAX_RETAINED;
+    this.maxPending =
+      options.maxPending ?? VisualDrawManager.DEFAULT_MAX_PENDING;
+    this.maxRetained =
+      options.maxRetained ?? VisualDrawManager.DEFAULT_MAX_RETAINED;
   }
 
   public begin(
@@ -430,6 +428,7 @@ export class VisualDrawManager {
       spec.language,
       "# 🔮 Your Moon Phase Reading",
       "# 🔮 你的月相解读",
+      "# 🔮 Твой лунный расклад",
     );
     const text = spec.moonGuidance
       ? `${spec.moonGuidance}\n\n---\n\n${heading}\n\n${performed.text}`

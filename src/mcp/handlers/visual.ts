@@ -1,5 +1,6 @@
 import {
   calculateMoonPhase,
+  localizedMoonPhase,
   getMoonPhaseRecommendations,
 } from "../../tarot/readings/lunar-utils.js";
 import { localizedSpread } from "../../tarot/readings/spread-localizations.js";
@@ -39,12 +40,7 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
     return formatValidationError("readingKind", kind.errors);
   }
 
-  const commonKeys = [
-    "readingKind",
-    "language",
-    "question",
-    "idempotencyKey",
-  ];
+  const commonKeys = ["readingKind", "language", "question", "idempotencyKey"];
   const kindKeys = {
     spread: ["spreadType", "sessionId"],
     daily: [],
@@ -67,12 +63,18 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
 
   const defaultQuestion =
     kind.data === "daily"
-      ? pick(lang, "What do I need to know for today?", "今天我需要知道什么？")
+      ? pick(
+          lang,
+          "What do I need to know for today?",
+          "今天我需要知道什么？",
+          `Что мне нужно знать о сегодняшнем дне?`,
+        )
       : kind.data === "moon"
         ? pick(
             lang,
             "What guidance does the current moon phase offer?",
             "当前月相带来了什么指引？",
+            `Какой ориентир даёт нынешняя фаза Луны?`,
           )
         : undefined;
   const question =
@@ -143,16 +145,14 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
     };
   } else if (kind.data === "moon") {
     const customDate =
-      args.customDate === undefined
-        ? undefined
-        : parseIsoDate(args.customDate);
+      args.customDate === undefined ? undefined : parseIsoDate(args.customDate);
     if (customDate === null) {
       return toolError(
         "Error: customDate must be a valid date in YYYY-MM-DD format.",
       );
     }
     const date = customDate ?? new Date();
-    const moonInfo = calculateMoonPhase(date);
+    const moonInfo = localizedMoonPhase(calculateMoonPhase(date), lang);
     const spreadType = moonInfo.recommendedSpreads[0] || "three_card";
     const spread = TAROT_SPREADS[spreadType as keyof typeof TAROT_SPREADS];
     if (!spread) {
@@ -225,6 +225,7 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
                     lang,
                     `What ${name.trim()} represents in this reading`,
                     `${name.trim()}在本次解读中所代表的意义`,
+                    `Что означает позиция «${name.trim()}» в этом раскладе`,
                   )
                 : position.meaning;
           return { name, meaning };
@@ -234,7 +235,12 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
       name: nested.name,
       description:
         nested.description ??
-        pick(lang, "A custom visual tarot spread", "自定义可视化塔罗牌阵"),
+        pick(
+          lang,
+          "A custom visual tarot spread",
+          "自定义可视化塔罗牌阵",
+          `Свой визуальный расклад Таро`,
+        ),
       positions: normalizedPositions,
     });
     if (!customSpread.success) {
@@ -272,6 +278,7 @@ export const handleBeginVisualReading: ToolHandler = (ctx, args) => {
       lang,
       `The visual table is ready. Choose exactly ${draw.requiredCount} card backs and confirm your selection in the interactive view.`,
       `可视化牌桌已准备好。请在交互视图中选择恰好 ${draw.requiredCount} 张牌背并确认。`,
+      `Карточный стол готов. Выбери карты рубашкой вверх — ровно ${draw.requiredCount} — и подтверди выбор на столе.`,
     ),
     draw,
   );

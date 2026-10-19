@@ -125,11 +125,12 @@ async function postHandoffJson(
     });
   } catch (error) {
     if (signal?.aborted) throw error;
-    const language: Language = document.documentElement.lang
-      .toLowerCase()
-      .startsWith("zh")
-      ? "zh"
-      : "en";
+    const language: Language =
+      document.documentElement.lang === "ru"
+        ? "ru"
+        : document.documentElement.lang.toLowerCase().startsWith("zh")
+          ? "zh"
+          : "en";
     throw new Error(t(language, "handoffDisconnected"), { cause: error });
   }
   const body = (await response.json().catch(() => ({}))) as unknown;

@@ -35,6 +35,7 @@ export interface TarotCard {
   description: string;
   /** Optional Chinese localization; missing fields fall back to English. */
   zh?: CardLocalization;
+  ru?: CardLocalization;
 }
 
 export interface DrawnCard {
@@ -99,11 +100,13 @@ export type CardOrientation = "upright" | "reversed";
 export type CardMeanings = TarotCard["meanings"]["upright"];
 
 /** Output languages. English is canonical; zh falls back field-by-field. */
-export const LANGUAGES = ["en", "zh"] as const;
+export const LANGUAGES = ["en", "zh", "ru"] as const;
 export type Language = (typeof LANGUAGES)[number];
 
 /** Optional Chinese localization block carried by a card. */
 export interface CardLocalization {
+  astrology?: string;
+  numerology?: string;
   name?: string;
   keywords?: {
     upright: string[];
@@ -151,4 +154,11 @@ export const SPREAD_TYPES = [
 ] as const;
 
 export type SpreadType = (typeof SPREAD_TYPES)[number];
-export type CardCategory = "all" | "major_arcana" | "minor_arcana" | "wands" | "cups" | "swords" | "pentacles";
+export type CardCategory =
+  | "all"
+  | "major_arcana"
+  | "minor_arcana"
+  | "wands"
+  | "cups"
+  | "swords"
+  | "pentacles";

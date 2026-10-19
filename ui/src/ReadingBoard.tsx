@@ -6,6 +6,7 @@ import { ReadingInterpretation } from "./ReadingInterpretation.js";
 import { RitualProgress } from "./RitualProgress.js";
 import { cardBackStyle } from "./card-style.js";
 import { prefersReducedMotion } from "./flip.js";
+import { errorCopy } from "./error-copy.js";
 import { t } from "./i18n.js";
 import { layoutForSpread } from "./spreads.js";
 import type {
@@ -449,7 +450,9 @@ export function ReadingBoard({
                   <div>
                     <strong>{t(language, "interpretationFailed")}</strong>
                     {continuation.detail ? (
-                      <span>{continuation.detail}</span>
+                      <span>
+                        {errorCopy({ message: continuation.detail }, language)}
+                      </span>
                     ) : null}
                   </div>
                   <div className="error-banner__actions">

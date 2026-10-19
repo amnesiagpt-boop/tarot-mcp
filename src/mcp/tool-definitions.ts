@@ -108,7 +108,7 @@ const VISUAL_BEGIN_OUTPUT_SCHEMA: Record<string, unknown> = {
       enum: ["spread", "daily", "moon", "custom"],
     },
     question: { type: "string" },
-    language: { type: "string", enum: ["en", "zh"] },
+    language: { type: "string", enum: ["en", "zh", "ru"] },
     createdAt: { type: "string", description: "ISO 8601" },
     expiresAt: { type: "string", description: "ISO 8601" },
     requiredCount: { type: "integer" },
@@ -165,7 +165,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -201,7 +201,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -240,7 +240,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -264,7 +264,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -365,7 +365,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -449,7 +449,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -485,7 +485,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -515,7 +515,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -560,7 +560,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -591,7 +591,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -655,7 +655,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -754,7 +754,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },
@@ -820,7 +820,7 @@ const TOOL_DEFINITIONS: readonly Tool[] = Object.freeze([
       properties: {
         language: {
           type: "string",
-          enum: ["en", "zh"],
+          enum: ["en", "zh", "ru"],
           description: "Output language (default: en)",
           default: "en",
         },

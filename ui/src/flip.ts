@@ -43,6 +43,7 @@ export function measure(node: Element, rotation = 0): FlipRect {
 }
 
 function clearFlip(node: HTMLElement): void {
+  node.style.removeProperty("opacity");
   node.style.removeProperty("--flip-x");
   node.style.removeProperty("--flip-y");
   node.style.removeProperty("--flip-scale");
@@ -170,6 +171,7 @@ export function playFlipOut(
     if (finished) return;
     finished = true;
     window.clearTimeout(timer);
+    clearFlip(node);
     onFinish?.();
   };
 

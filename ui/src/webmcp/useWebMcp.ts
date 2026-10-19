@@ -75,15 +75,17 @@ export function useWebMcp(enabled: boolean, current: ReadingContext): void {
           "List the available tarot spreads with their card counts and positions. Does not draw cards.",
         inputSchema: {
           type: "object",
-          properties: { language: { type: "string", enum: ["en", "zh"] } },
+          properties: {
+            language: { type: "string", enum: ["en", "zh", "ru"] },
+          },
           additionalProperties: false,
         },
         annotations: { readOnlyHint: true },
         async execute(input, { signal } = {}) {
           signal?.throwIfAborted();
           const language = input.language ?? latest.current.language;
-          if (language !== "en" && language !== "zh")
-            throw new Error('Language must be "en" or "zh".');
+          if (language !== "en" && language !== "zh" && language !== "ru")
+            throw new Error('Language must be "en", "zh" or "ru".');
           return { spreads: getSpreadPickerCatalog(language) };
         },
       },

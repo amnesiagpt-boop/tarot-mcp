@@ -28,9 +28,7 @@ function asError(error: unknown): DrawError {
 
 /** The session owns requests and transitions; card placement and animation stay in the view. */
 export function useDrawSession(client: DrawClient) {
-  const [language, setLanguage] = useState<Language>(() =>
-    navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en",
-  );
+  const [language, setLanguage] = useState<Language>(() => "ru");
   const [stage, updateStage] = useState<DrawStageName>(
     client.target === "web" && !client.startsWithHandoff?.()
       ? "setup"

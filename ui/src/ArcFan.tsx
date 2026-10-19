@@ -34,7 +34,17 @@ const PAGE_STRIDE = 10;
 const SETTLE_RATE = 0.24;
 const IDLE_MS = 420;
 
-function configFor(width: number): ArcConfig {
+function configFor(width: number, height: number): ArcConfig {
+  // Fit the same curve and lift choreography to the space allocated by the table.
+  if (height < 285) {
+    const cardWidth = Math.max(48, Math.min(92, (height - 80) / 1.95));
+    return {
+      step: 44,
+      cardWidth,
+      depth: cardWidth * 0.45,
+      reach: Math.max(300, width * 0.6),
+    };
+  }
   // The exposed step is the effective hit strip once neighbouring cards overlap.
   if (width < 560) return { step: 44, cardWidth: 72, depth: 56, reach: 300 };
   if (width < 900) return { step: 44, cardWidth: 80, depth: 74, reach: 420 };
@@ -93,7 +103,8 @@ export const ArcFan = forwardRef<ArcFanHandle, ArcFanProps>(function ArcFan(
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [width, setWidth] = useState(1200);
 
-  const config = useMemo(() => configFor(width), [width]);
+  const [height, setHeight] = useState(300);
+  const config = useMemo(() => configFor(width, height), [width, height]);
   const total = slotIds.length;
   const stripWidth = arcStripWidth(total, config);
   const selectedSet = useMemo(() => new Set(selected), [selected]);
@@ -183,10 +194,13 @@ export const ArcFan = forwardRef<ArcFanHandle, ArcFanProps>(function ArcFan(
     const view = scroller.current;
     if (!view) return;
     if (view.clientWidth > 0) setWidth(view.clientWidth);
+    if (view.clientHeight > 0) setHeight(view.clientHeight);
     if (typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver((entries) => {
       const next = entries[0]?.contentRect.width;
       if (next && next > 0) setWidth(next);
+      const nextHeight = entries[0]?.contentRect.height;
+      if (nextHeight && nextHeight > 0) setHeight(nextHeight);
       wake();
     });
     observer.observe(view);

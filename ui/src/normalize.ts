@@ -30,7 +30,13 @@ function numberValue(...values: unknown[]): number | undefined {
 }
 
 function languageValue(value: unknown, fallback: Language = "en"): Language {
-  return value === "zh" ? "zh" : value === "en" ? "en" : fallback;
+  return value === "ru"
+    ? "ru"
+    : value === "zh"
+      ? "zh"
+      : value === "en"
+        ? "en"
+        : fallback;
 }
 
 function readingKindValue(

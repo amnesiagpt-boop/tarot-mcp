@@ -274,11 +274,12 @@ export function DrawStage({
         />
       </section>
 
-      {notice}
-      {fullscreen.failure !== undefined ? (
-        <FullscreenNotice detail={fullscreen.failure} language={language} />
-      ) : null}
-
+      <div className="table-notices">
+        {notice}
+        {fullscreen.failure !== undefined ? (
+          <FullscreenNotice detail={fullscreen.failure} language={language} />
+        ) : null}
+      </div>
       <div className="draw-toolbar">
         <p
           id="deck-status"

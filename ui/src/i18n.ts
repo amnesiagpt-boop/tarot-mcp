@@ -1,6 +1,9 @@
 import type { Language } from "./types.js";
 
+import { messagesRu } from "./messages-ru.js";
+
 const messages = {
+  ru: messagesRu,
   en: {
     noWebInterpretation:
       "Select a revealed card to explore its meaning and position.",

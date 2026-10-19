@@ -7,7 +7,7 @@ const VISUAL_COMMON_INPUT_PROPERTIES = {
   },
   language: {
     type: "string",
-    enum: ["en", "zh"],
+    enum: ["en", "zh", "ru"],
     default: "en",
   },
   question: {

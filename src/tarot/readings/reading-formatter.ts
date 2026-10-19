@@ -23,12 +23,33 @@ export function formatReading(
     language,
     `# ${spreadName} Reading\n\n`,
     `# ${spreadName} 塔罗解读\n\n`,
+    `# Расклад «${spreadName}»\n\n`,
   );
-  result += `${pick(language, "**Question:**", "**问题：**")} ${reading.question}\n`;
-  result += `${pick(language, "**Date:**", "**日期：**")} ${reading.timestamp.toISOString()}\n`;
-  result += `${pick(language, "**Reading ID:**", "**解读 ID：**")} ${reading.id}\n`;
+  result += `${pick(
+    language,
+    "**Question:**",
+    "**问题：**",
+    `**Вопрос:**`,
+  )} ${reading.question}\n`;
+  result += `${pick(
+    language,
+    "**Date:**",
+    "**日期：**",
+    `**Дата:**`,
+  )} ${reading.timestamp.toISOString()}\n`;
+  result += `${pick(
+    language,
+    "**Reading ID:**",
+    "**解读 ID：**",
+    `**Номер расклада:**`,
+  )} ${reading.id}\n`;
   if (reading.sessionId) {
-    result += `${pick(language, "**Session ID:**", "**会话 ID：**")} ${reading.sessionId}`;
+    result += `${pick(
+      language,
+      "**Session ID:**",
+      "**会话 ID：**",
+      `**Номер сеанса:**`,
+    )} ${reading.sessionId}`;
     result +=
       readingNumber > 1
         ? pick(
@@ -38,19 +59,26 @@ export function formatReading(
             // as the whitespace-delimited token after the label, so the
             // marker must never be glued onto the id.
             ` （本会话第 ${readingNumber} 次解读）`,
+            ` (расклад № ${readingNumber} в этом сеансе)`,
           )
         : "";
     result += pick(
       language,
       `\n*Pass this sessionId to future readings to continue the session.*\n`,
       `\n*在后续解读中传入此 sessionId 即可延续本会话。*\n`,
+      `\n*Передавай этот sessionId в следующих раскладах, чтобы продолжить сеанс.*\n`,
     );
   }
   result += `\n`;
 
   result += `*${spreadDescription}*\n\n`;
 
-  result += pick(language, `## Your Cards\n\n`, `## 你抽到的牌\n\n`);
+  result += pick(
+    language,
+    `## Your Cards\n\n`,
+    `## 你抽到的牌\n\n`,
+    `## Твои карты\n\n`,
+  );
   reading.cards.forEach((drawnCard: DrawnCard, index: number) => {
     result += `### ${index + 1}. ${drawnCard.position}\n`;
     if (drawnCard.positionMeaning) {
@@ -67,10 +95,16 @@ export function formatReading(
       language,
       `*Keywords: ${keywords.join(", ")}*\n\n`,
       `*关键词：${keywords.join("、")}*\n\n`,
+      `*Ключевые слова: ${keywords.join(", ")}*\n\n`,
     );
   });
 
-  result += pick(language, `## Interpretation\n\n`, `## 解读\n\n`);
+  result += pick(
+    language,
+    `## Interpretation\n\n`,
+    `## 解读\n\n`,
+    `## Толкование\n\n`,
+  );
   result += reading.interpretation;
 
   return result;
@@ -95,17 +129,24 @@ export function renderAvailableSpreads(
     language,
     "# Available Tarot Spreads\n\n",
     "# 可用塔罗牌阵\n\n",
+    `# Доступные расклады Таро\n\n`,
   );
 
-  spreads.forEach(spread => {
+  spreads.forEach((spread) => {
     result += pick(
       language,
       `## ${spread.name} (${spread.cardCount} cards)\n\n`,
       `## ${spread.name}（${spread.cardCount} 张牌）\n\n`,
+      `## ${spread.name} (карт: ${spread.cardCount})\n\n`,
     );
     result += `${spread.description}\n\n`;
 
-    result += pick(language, "**Positions:**\n", "**牌位：**\n");
+    result += pick(
+      language,
+      "**Positions:**\n",
+      "**牌位：**\n",
+      `**Позиции:**\n`,
+    );
     spread.positions.forEach((position, index) => {
       result += `${index + 1}. **${position.name}**: ${position.meaning}\n`;
     });
@@ -116,6 +157,7 @@ export function renderAvailableSpreads(
     language,
     "Use the `perform_reading` tool with one of these spread types to get a reading.",
     "使用 `perform_reading` 工具并传入上述任一牌阵类型即可进行解读。",
+    `Используй инструмент \`perform_reading\` с одним из этих типов расклада, чтобы получить толкование.`,
   );
 
   return result;

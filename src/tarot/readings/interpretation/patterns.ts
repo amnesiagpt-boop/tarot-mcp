@@ -22,6 +22,25 @@ const REPEATED_NUMBER_THEMES: Record<number, string> = {
   14: "authority and leadership",
 };
 
+const REPEATED_NUMBER_THEMES_RU: Record<number, string> = Object.fromEntries(
+  [
+    "новые начинания и потенциал",
+    "равновесие и партнёрство",
+    "творчество и рост",
+    "устойчивость и основа",
+    "перемены и испытания",
+    "гармония и ответственность",
+    "духовное развитие и самоанализ",
+    "материальное мастерство и достижения",
+    "завершение и мудрость",
+    "осуществление и новые циклы",
+    "послания и свежий взгляд",
+    "действие и решительное стремление",
+    "заботливое мастерство и интуиция",
+    "авторитет и лидерство",
+  ].map((theme, i) => [i + 1, theme]),
+);
+
 const REPEATED_NUMBER_THEMES_ZH: Record<number, string> = {
   1: "新的开始与潜能",
   2: "平衡与伙伴关系",
@@ -46,66 +65,103 @@ export function selectRelevantMeaning(
   meanings: CardMeanings,
   position: string,
   question: string,
-  positionMeaning: string = ""
+  positionMeaning: string = "",
 ): string {
-  const contextLower = `${question} ${position} ${positionMeaning}`.toLowerCase();
+  const contextLower =
+    `${question} ${position} ${positionMeaning}`.toLowerCase();
 
   // Determine the most relevant aspect based on question content
-  if (matchesContext(contextLower, [
-    "love",
-    "relationship",
-    "romance",
-    "partner",
-    "marriage",
-    "affection",
-    "爱情",
-    "感情",
-    "恋爱",
-    "关系",
-    "伴侣",
-    "婚姻",
-  ])) {
+  if (
+    matchesContext(contextLower, [
+      "любов",
+      "любви",
+      "отношен",
+      "романт",
+      "партнёр",
+      "партнер",
+      "брак",
+      "чувств",
+      "love",
+      "relationship",
+      "romance",
+      "partner",
+      "marriage",
+      "affection",
+      "爱情",
+      "感情",
+      "恋爱",
+      "关系",
+      "伴侣",
+      "婚姻",
+    ])
+  ) {
     return meanings.love;
-  } else if (matchesContext(contextLower, [
-    "career",
-    "job",
-    "work",
-    "business",
-    "money",
-    "finance",
-    "study",
-    "事业",
-    "工作",
-    "职业",
-    "财务",
-    "金钱",
-    "学习",
-  ])) {
+  } else if (
+    matchesContext(contextLower, [
+      "карьер",
+      "работ",
+      "бизнес",
+      "деньг",
+      "денег",
+      "финанс",
+      "учёб",
+      "учеб",
+      "учить",
+      "career",
+      "job",
+      "work",
+      "business",
+      "money",
+      "finance",
+      "study",
+      "事业",
+      "工作",
+      "职业",
+      "财务",
+      "金钱",
+      "学习",
+    ])
+  ) {
     return meanings.career;
-  } else if (matchesContext(contextLower, [
-    "health",
-    "wellness",
-    "body",
-    "energy",
-    "rest",
-    "健康",
-    "身体",
-    "精力",
-    "休息",
-  ])) {
+  } else if (
+    matchesContext(contextLower, [
+      "здоров",
+      "самочувств",
+      "тело",
+      "тела",
+      "энерги",
+      "отдых",
+      "health",
+      "wellness",
+      "body",
+      "energy",
+      "rest",
+      "健康",
+      "身体",
+      "精力",
+      "休息",
+    ])
+  ) {
     return meanings.health;
-  } else if (matchesContext(contextLower, [
-    "spiritual",
-    "purpose",
-    "meaning",
-    "soul",
-    "growth",
-    "灵性",
-    "精神",
-    "意义",
-    "使命",
-    "成长",
-  ])) {
+  } else if (
+    matchesContext(contextLower, [
+      "духов",
+      "предназнач",
+      "смысл",
+      "душ",
+      "рост",
+      "spiritual",
+      "purpose",
+      "meaning",
+      "soul",
+      "growth",
+      "灵性",
+      "精神",
+      "意义",
+      "使命",
+      "成长",
+    ])
+  ) {
     return meanings.spirituality;
   }
 
@@ -123,11 +179,20 @@ export function generateOverallInterpretation(
   drawnCards: DrawnCard[],
   language: Language = "en",
 ): string {
-  let overall = pick(language, "**Overall Interpretation:**\n\n", "**整体解读：**\n\n");
+  let overall = pick(
+    language,
+    "**Overall Interpretation:**\n\n",
+    "**整体解读：**\n\n",
+    `**Общее толкование:**\n\n`,
+  );
 
   // Analyze the energy of the reading
-  const uprightCount = drawnCards.filter(c => c.orientation === "upright").length;
-  const majorArcanaCount = drawnCards.filter(c => c.card.arcana === "major").length;
+  const uprightCount = drawnCards.filter(
+    (c) => c.orientation === "upright",
+  ).length;
+  const majorArcanaCount = drawnCards.filter(
+    (c) => c.card.arcana === "major",
+  ).length;
   const totalCards = drawnCards.length;
 
   // Major Arcana influence analysis
@@ -136,18 +201,21 @@ export function generateOverallInterpretation(
       language,
       "This reading is heavily influenced by Major Arcana cards, indicating that significant spiritual forces, life lessons, and karmic influences are at work. The universe is guiding you through important transformations. ",
       "这次解读深受大阿卡纳牌的影响，表明重要的灵性力量、人生课题与业力正在起作用。宇宙正引导你经历重要的转化。",
+      `В этом раскладе сильно влияние Старших арканов: действуют значительные духовные силы, жизненные уроки и кармические влияния. Вселенная ведёт тебя через важные преображения. `,
     );
   } else if (majorArcanaCount === 0) {
     overall += pick(
       language,
       "This reading contains only Minor Arcana cards, suggesting that the situation is primarily within your control and relates to everyday matters and practical concerns. ",
       "这次解读全部由小阿卡纳牌组成，说明局面主要在你的掌控之中，与日常事务和现实考量相关。",
+      `В этом раскладе только Младшие арканы: ситуация преимущественно в твоих руках и связана с повседневными делами и практическими заботами. `,
     );
   } else {
     overall += pick(
       language,
       "The balance of Major and Minor Arcana cards suggests a blend of spiritual guidance and practical action is needed. ",
       "大小阿卡纳的均衡出现，说明你需要将灵性指引与实际行动结合起来。",
+      `Равновесие Старших и Младших арканов подсказывает, что нужно соединить духовные ориентиры с практическими действиями. `,
     );
   }
 
@@ -158,30 +226,35 @@ export function generateOverallInterpretation(
       language,
       "The predominance of upright cards indicates positive energy, clear direction, and favorable circumstances. You're aligned with the natural flow of events. ",
       "正位牌占绝大多数，显示出积极的能量、清晰的方向和有利的形势。你正顺应着事件的自然流动。",
+      `Преобладание прямых карт указывает на благоприятную энергию, ясное направление и подходящие обстоятельства. Ты следуешь естественному ходу событий. `,
     );
   } else if (uprightPercentage >= 60) {
     overall += pick(
       language,
       "Most cards are upright, suggesting generally positive energy with some areas requiring attention or inner work. ",
       "大部分牌为正位，总体能量积极，但仍有一些方面需要关注或做内在功课。",
+      `Большинство карт прямые: энергия в целом благоприятна, хотя отдельным областям нужны внимание или внутренняя работа. `,
     );
   } else if (uprightPercentage >= 40) {
     overall += pick(
       language,
       "The balance of upright and reversed cards indicates a mixed situation with both opportunities and challenges present. ",
       "正逆位牌数量相当，局面喜忧参半，机会与挑战并存。",
+      `Равновесие прямых и перевёрнутых карт указывает на неоднозначную ситуацию: возможности и испытания присутствуют одновременно. `,
     );
   } else if (uprightPercentage >= 20) {
     overall += pick(
       language,
       "The majority of reversed cards suggests internal blocks, delays, or the need for significant introspection and inner work. ",
       "逆位牌居多，提示存在内在阻碍、延迟，或需要深入的自省与内在功课。",
+      `Большинство карт перевёрнуты: возможны внутренние препятствия, задержки или потребность в серьёзном самоанализе и внутренней работе. `,
     );
   } else {
     overall += pick(
       language,
       "The predominance of reversed cards indicates a time of deep inner transformation, spiritual crisis, or significant obstacles that require patience and self-reflection. ",
       "逆位牌占绝大多数，预示着一段深层内在转化、灵性危机或重大阻碍的时期，需要耐心与自我反思。",
+      `Преобладание перевёрнутых карт указывает на время глубокого внутреннего преображения, духовного кризиса или значительных препятствий, требующих терпения и самоанализа. `,
     );
   }
 
@@ -224,6 +297,7 @@ function generateAdvancedCombinationInterpretation(
     language,
     "\n\nTrust your intuition as you reflect on these insights and how they apply to your specific situation.",
     "\n\n在回味这些洞见、思考它们如何对应你的具体处境时，请相信自己的直觉。",
+    `\n\nДоверяй интуиции, размышляя над этими смыслами и их связью с твоей конкретной ситуацией.`,
   );
 
   return interpretation;
@@ -235,7 +309,7 @@ function generateAdvancedCombinationInterpretation(
 function analyzeElements(drawnCards: DrawnCard[]): Record<string, number> {
   const elementCounts = { fire: 0, water: 0, air: 0, earth: 0 };
 
-  drawnCards.forEach(drawnCard => {
+  drawnCards.forEach((drawnCard) => {
     if (drawnCard.card.element) {
       elementCounts[drawnCard.card.element]++;
     }
@@ -255,8 +329,9 @@ function interpretElementalBalance(
   if (total === 0) return "";
 
   let interpretation = "";
-  const dominantElement = Object.entries(elementCounts)
-    .sort(([,a], [,b]) => b - a)[0];
+  const dominantElement = Object.entries(elementCounts).sort(
+    ([, a], [, b]) => b - a,
+  )[0];
 
   if (dominantElement[1] > total / 2) {
     switch (dominantElement[0]) {
@@ -265,6 +340,7 @@ function interpretElementalBalance(
           language,
           "The dominance of Fire energy suggests this is a time for action, creativity, and passionate pursuit of your goals. ",
           "火元素能量占主导，说明此刻适合行动、发挥创造力并满怀热情地追求目标。",
+          `Преобладание энергии Огня подсказывает: сейчас время действия, творчества и страстного стремления к своим целям. `,
         );
         break;
       case "water":
@@ -272,6 +348,7 @@ function interpretElementalBalance(
           language,
           "The prevalence of Water energy indicates this situation is deeply emotional and intuitive, requiring you to trust your feelings. ",
           "水元素能量突出，表明这个局面情感深沉且依赖直觉，需要你信任自己的感受。",
+          `Преобладание энергии Воды указывает на глубокую эмоциональную и интуитивную природу ситуации: доверься своим чувствам. `,
         );
         break;
       case "air":
@@ -279,6 +356,7 @@ function interpretElementalBalance(
           language,
           "The abundance of Air energy suggests this is primarily a mental matter requiring clear thinking, communication, and intellectual approach. ",
           "风元素能量充沛，说明这主要是一件需要清晰思考、沟通与理性处理的事情。",
+          `Обилие энергии Воздуха подсказывает: вопрос преимущественно умственный и требует ясных мыслей, общения и интеллектуального подхода. `,
         );
         break;
       case "earth":
@@ -286,6 +364,7 @@ function interpretElementalBalance(
           language,
           "The strong Earth energy indicates this situation requires practical action, patience, and attention to material concerns. ",
           "土元素能量强劲，表明这个局面需要务实的行动、耐心以及对物质层面的关注。",
+          `Сильная энергия Земли указывает на необходимость практических действий, терпения и внимания к материальным заботам. `,
         );
         break;
     }
@@ -301,6 +380,7 @@ function interpretElementalBalance(
       language,
       `The absence of ${missingElements.join(" and ")} energy suggests you may need to cultivate these qualities to achieve balance. `,
       `${missingElements.map((element) => localizedElement(element, "zh")).join("与")}元素能量的缺席，提示你可能需要培养这些特质来达到平衡。`,
+      `Отсутствие энергии стихий ${missingElements.map((element) => localizedElement(element, "ru")).join(" и ")} подсказывает: для равновесия стоит развивать соответствующие качества. `,
     );
   }
 
@@ -311,17 +391,19 @@ function interpretElementalBalance(
  * Analyze suit patterns
  */
 function analyzeSuits(drawnCards: DrawnCard[], language: Language): string {
-  const suits = drawnCards
-    .filter(c => c.card.suit)
-    .map(c => c.card.suit!);
+  const suits = drawnCards.filter((c) => c.card.suit).map((c) => c.card.suit!);
 
-  const suitCounts = suits.reduce((acc, suit) => {
-    acc[suit] = (acc[suit] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const suitCounts = suits.reduce(
+    (acc, suit) => {
+      acc[suit] = (acc[suit] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  const dominantSuit = Object.entries(suitCounts)
-    .sort(([,a], [,b]) => b - a)[0];
+  const dominantSuit = Object.entries(suitCounts).sort(
+    ([, a], [, b]) => b - a,
+  )[0];
 
   if (!dominantSuit || dominantSuit[1] <= 1) return "";
 
@@ -332,6 +414,7 @@ function analyzeSuits(drawnCards: DrawnCard[], language: Language): string {
         language,
         "The multiple Wands indicate this situation involves creative projects, career ambitions, and the need for decisive action. ",
         "多张权杖牌表明这个局面涉及创造性项目、事业抱负，并需要果断的行动。",
+        `Несколько Жезлов указывают на творческие проекты, карьерные амбиции и необходимость решительных действий. `,
       );
       break;
     case "cups":
@@ -339,6 +422,7 @@ function analyzeSuits(drawnCards: DrawnCard[], language: Language): string {
         language,
         "The presence of multiple Cups shows this is fundamentally about emotions, relationships, and spiritual matters. ",
         "多张圣杯牌显示，这件事本质上关乎情感、关系与心灵层面。",
+        `Несколько Кубков показывают, что в основе вопроса — эмоции, отношения и духовные темы. `,
       );
       break;
     case "swords":
@@ -346,6 +430,7 @@ function analyzeSuits(drawnCards: DrawnCard[], language: Language): string {
         language,
         "The dominance of Swords reveals this situation involves mental challenges, conflicts, and the need for clear communication. ",
         "宝剑牌占主导，揭示这个局面涉及思维上的挑战、冲突，以及清晰沟通的必要。",
+        `Преобладание Мечей раскрывает умственные испытания, конфликты и необходимость ясного общения. `,
       );
       break;
     case "pentacles":
@@ -353,6 +438,7 @@ function analyzeSuits(drawnCards: DrawnCard[], language: Language): string {
         language,
         "Multiple Pentacles emphasize material concerns, financial matters, and the need for practical, grounded action. ",
         "多张星币牌强调物质层面的考量、财务事项，以及脚踏实地行动的必要。",
+        `Несколько Пентаклей подчёркивают материальные заботы, финансовые вопросы и необходимость практичных, обоснованных действий. `,
       );
       break;
   }
@@ -368,8 +454,8 @@ function analyzeNumericalPatterns(
   language: Language,
 ): string {
   const numbers = drawnCards
-    .filter(c => c.card.number !== undefined)
-    .map(c => c.card.number!);
+    .filter((c) => c.card.number !== undefined)
+    .map((c) => c.card.number!);
 
   if (numbers.length < 2) return "";
 
@@ -382,32 +468,39 @@ function analyzeNumericalPatterns(
       language,
       "The low-numbered cards indicate this situation is in its beginning stages, full of potential and new energy. ",
       "偏小的数字表明事情尚处于起步阶段，充满潜能与新能量。",
+      `Карты с небольшими числами указывают на начальный этап ситуации, полный потенциала и новой энергии. `,
     );
   } else if (avgNumber <= 6) {
     interpretation += pick(
       language,
       "The mid-range numbers suggest this situation is in its development phase, requiring steady progress and patience. ",
       "中段的数字说明事情正处于发展期，需要稳步推进与耐心。",
+      `Средние числа подсказывают: ситуация находится на этапе развития, требующем последовательного продвижения и терпения. `,
     );
   } else if (avgNumber <= 9) {
     interpretation += pick(
       language,
       "The higher numbers indicate this situation is approaching completion or mastery, requiring final efforts. ",
       "偏大的数字表明事情已接近完成或成熟，需要最后的冲刺。",
+      `Большие числа указывают на приближение завершения или мастерства: необходимы заключительные усилия. `,
     );
   } else {
     interpretation += pick(
       language,
       "The presence of high numbers and court cards suggests mastery, completion, or the involvement of significant people. ",
       "高位数字与宫廷牌的出现，预示着成熟、圆满，或有重要人物参与其中。",
+      `Большие числа и придворные карты подсказывают мастерство, завершение или участие значимых людей. `,
     );
   }
 
   // Look for repeated numbers
-  const numberCounts = numbers.reduce((acc, num) => {
-    acc[num] = (acc[num] || 0) + 1;
-    return acc;
-  }, {} as Record<number, number>);
+  const numberCounts = numbers.reduce(
+    (acc, num) => {
+      acc[num] = (acc[num] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   const repeatedNumbers = Object.entries(numberCounts)
     .filter(([, count]) => count > 1)
@@ -416,7 +509,11 @@ function analyzeNumericalPatterns(
   // Only numbers with a known theme contribute; guard so an unthemed
   // repeat can never trigger the sentence (and corrupt surrounding text).
   const themeTable =
-    language === "zh" ? REPEATED_NUMBER_THEMES_ZH : REPEATED_NUMBER_THEMES;
+    language === "ru"
+      ? REPEATED_NUMBER_THEMES_RU
+      : language === "zh"
+        ? REPEATED_NUMBER_THEMES_ZH
+        : REPEATED_NUMBER_THEMES;
   const repeatedThemes = repeatedNumbers
     .map((num) => themeTable[num])
     .filter((theme): theme is string => theme !== undefined);
@@ -426,6 +523,7 @@ function analyzeNumericalPatterns(
       language,
       `The repetition of ${repeatedNumbers.join(" and ")} emphasizes the themes of ${repeatedThemes.join(", ")}. `,
       `数字 ${repeatedNumbers.join(" 和 ")} 的重复出现，强调了${repeatedThemes.join("、")}这些主题。`,
+      `Повторение чисел ${repeatedNumbers.join(" и ")} подчёркивает темы: ${repeatedThemes.join(", ")}. `,
     );
   }
 
@@ -435,12 +533,16 @@ function analyzeNumericalPatterns(
 /**
  * Analyze court cards in the reading
  */
-function analyzeCourtCards(drawnCards: DrawnCard[], language: Language): string {
-  const courtCards = drawnCards.filter(c =>
-    c.card.name.includes("Page") ||
-    c.card.name.includes("Knight") ||
-    c.card.name.includes("Queen") ||
-    c.card.name.includes("King")
+function analyzeCourtCards(
+  drawnCards: DrawnCard[],
+  language: Language,
+): string {
+  const courtCards = drawnCards.filter(
+    (c) =>
+      c.card.name.includes("Page") ||
+      c.card.name.includes("Knight") ||
+      c.card.name.includes("Queen") ||
+      c.card.name.includes("King"),
   );
 
   if (courtCards.length === 0) return "";
@@ -451,12 +553,14 @@ function analyzeCourtCards(drawnCards: DrawnCard[], language: Language): string 
       language,
       "The presence of a court card suggests that a specific person or personality aspect is significant to this situation. ",
       "一张宫廷牌的出现，提示某个特定的人或人格面向对这个局面有重要影响。",
+      `Придворная карта подсказывает, что для ситуации значим конкретный человек или определённая сторона личности. `,
     );
   } else {
     interpretation += pick(
       language,
       `The ${courtCards.length} court cards indicate that multiple people or personality aspects are influencing this situation. `,
       `${courtCards.length} 张宫廷牌表明有多个人或多种人格面向正在影响这个局面。`,
+      `Придворных карт — ${courtCards.length}: на ситуацию влияют несколько людей или сторон личности. `,
     );
   }
 
@@ -470,14 +574,14 @@ function analyzeMajorArcanaPatterns(
   drawnCards: DrawnCard[],
   language: Language,
 ): string {
-  const majorCards = drawnCards.filter(c => c.card.arcana === "major");
+  const majorCards = drawnCards.filter((c) => c.card.arcana === "major");
   if (majorCards.length === 0) return "";
 
   let interpretation = "";
 
   // Analyze the Fool's Journey progression
   const majorNumbers = majorCards
-    .map(c => c.card.number)
+    .map((c) => c.card.number)
     .filter((n): n is number => n !== undefined)
     .sort((a, b) => a - b);
 
@@ -488,32 +592,39 @@ function analyzeMajorArcanaPatterns(
         language,
         "The wide span of Major Arcana cards suggests you're experiencing a significant life transformation that touches many aspects of your spiritual journey. ",
         "大阿卡纳牌的跨度很大，说明你正经历一场触及灵性旅程诸多层面的重大人生转化。",
+        `Широкий диапазон Старших арканов подсказывает: ты переживаешь значительное жизненное преображение, затрагивающее многие стороны духовного пути. `,
       );
     } else if (span < 5) {
       interpretation += pick(
         language,
         "The close grouping of Major Arcana cards indicates you're working through a specific phase of spiritual development. ",
         "大阿卡纳牌集中在相近的阶段，表明你正在深入修习灵性发展的某个特定课题。",
+        `Близкая группа Старших арканов указывает на прохождение определённого этапа духовного развития. `,
       );
     }
   }
 
   // Look for specific archetypal themes
-  const cardNames = majorCards.map(c => c.card.name.toLowerCase());
+  const cardNames = majorCards.map((c) => c.card.name.toLowerCase());
 
   if (cardNames.includes("the fool") && cardNames.includes("the magician")) {
     interpretation += pick(
       language,
       "The presence of both The Fool and The Magician suggests a powerful combination of new beginnings and the ability to manifest your desires. ",
       "愚者与魔术师同时出现，预示着新开始与心想事成的显化能力的强大组合。",
+      `Одновременное присутствие Шута и Мага подсказывает мощное сочетание новых начинаний и способности воплощать свои желания. `,
     );
   }
 
-  if (cardNames.includes("the high priestess") && cardNames.includes("the hierophant")) {
+  if (
+    cardNames.includes("the high priestess") &&
+    cardNames.includes("the hierophant")
+  ) {
     interpretation += pick(
       language,
       "The High Priestess and Hierophant together indicate a balance between inner wisdom and traditional teachings. ",
       "女祭司与教皇同时出现，象征内在智慧与传统教诲之间的平衡。",
+      `Верховная Жрица и Иерофант вместе указывают на равновесие внутренней мудрости и традиционных учений.`,
     );
   }
 

@@ -2,13 +2,22 @@
  * Moon phase calculations and lunar-related utilities for tarot readings
  */
 
+import { PHASE_DATA_RU } from "./moon-localizations-ru.js";
 import { Language } from "../shared/types.js";
 import { pick } from "../shared/i18n.js";
 import { TAROT_SPREADS, isValidSpreadType } from "./spreads.js";
 import { localizedSpread } from "./spread-localizations.js";
 
 export interface MoonPhaseInfo {
-  phase: "new" | "waxing_crescent" | "first_quarter" | "waxing_gibbous" | "full" | "waning_gibbous" | "last_quarter" | "waning_crescent";
+  phase:
+    | "new"
+    | "waxing_crescent"
+    | "first_quarter"
+    | "waxing_gibbous"
+    | "full"
+    | "waning_gibbous"
+    | "last_quarter"
+    | "waning_crescent";
   illumination: number; // 0-1
   name: string;
   description: string;
@@ -34,66 +43,138 @@ const PHASE_ORDER: MoonPhaseName[] = [
   "full",
   "waning_gibbous",
   "last_quarter",
-  "waning_crescent"
+  "waning_crescent",
 ];
 
 const PHASE_DATA: Record<MoonPhaseName, Omit<MoonPhaseInfo, "illumination">> = {
   new: {
     phase: "new",
     name: "New Moon",
-    description: "The moon is not visible, representing new beginnings and fresh starts",
-    tarotThemes: ["new beginnings", "intentions", "manifestation", "planting seeds", "inner reflection"],
-    recommendedSpreads: ["new_moon_intentions", "single_card", "daily_guidance"]
+    description:
+      "The moon is not visible, representing new beginnings and fresh starts",
+    tarotThemes: [
+      "new beginnings",
+      "intentions",
+      "manifestation",
+      "planting seeds",
+      "inner reflection",
+    ],
+    recommendedSpreads: [
+      "new_moon_intentions",
+      "single_card",
+      "daily_guidance",
+    ],
   },
   waxing_crescent: {
     phase: "waxing_crescent",
     name: "Waxing Crescent",
-    description: "A thin crescent appears, symbolizing growth and building energy",
-    tarotThemes: ["growth", "building energy", "taking action", "momentum", "hope"],
-    recommendedSpreads: ["three_card", "decision_making", "career_path"]
+    description:
+      "A thin crescent appears, symbolizing growth and building energy",
+    tarotThemes: [
+      "growth",
+      "building energy",
+      "taking action",
+      "momentum",
+      "hope",
+    ],
+    recommendedSpreads: ["three_card", "decision_making", "career_path"],
   },
   first_quarter: {
     phase: "first_quarter",
     name: "First Quarter",
-    description: "Half the moon is illuminated, representing challenges and decisions",
-    tarotThemes: ["challenges", "decisions", "perseverance", "action", "overcoming obstacles"],
-    recommendedSpreads: ["decision_making", "horseshoe", "celtic_cross"]
+    description:
+      "Half the moon is illuminated, representing challenges and decisions",
+    tarotThemes: [
+      "challenges",
+      "decisions",
+      "perseverance",
+      "action",
+      "overcoming obstacles",
+    ],
+    recommendedSpreads: ["decision_making", "horseshoe", "celtic_cross"],
   },
   waxing_gibbous: {
     phase: "waxing_gibbous",
     name: "Waxing Gibbous",
-    description: "The moon is nearly full, representing refinement and adjustment",
-    tarotThemes: ["refinement", "adjustment", "patience", "fine-tuning", "preparation"],
-    recommendedSpreads: ["spiritual_guidance", "elemental_balance", "chakra_alignment"]
+    description:
+      "The moon is nearly full, representing refinement and adjustment",
+    tarotThemes: [
+      "refinement",
+      "adjustment",
+      "patience",
+      "fine-tuning",
+      "preparation",
+    ],
+    recommendedSpreads: [
+      "spiritual_guidance",
+      "elemental_balance",
+      "chakra_alignment",
+    ],
   },
   full: {
     phase: "full",
     name: "Full Moon",
-    description: "The moon is fully illuminated, representing culmination and release",
-    tarotThemes: ["culmination", "release", "manifestation", "completion", "heightened intuition"],
-    recommendedSpreads: ["full_moon_release", "shadow_work", "mandala"]
+    description:
+      "The moon is fully illuminated, representing culmination and release",
+    tarotThemes: [
+      "culmination",
+      "release",
+      "manifestation",
+      "completion",
+      "heightened intuition",
+    ],
+    recommendedSpreads: ["full_moon_release", "shadow_work", "mandala"],
   },
   waning_gibbous: {
     phase: "waning_gibbous",
     name: "Waning Gibbous",
-    description: "The moon begins to wane, representing gratitude and sharing wisdom",
-    tarotThemes: ["gratitude", "sharing wisdom", "teaching", "reflection", "giving back"],
-    recommendedSpreads: ["spiritual_guidance", "tree_of_life", "past_life_karma"]
+    description:
+      "The moon begins to wane, representing gratitude and sharing wisdom",
+    tarotThemes: [
+      "gratitude",
+      "sharing wisdom",
+      "teaching",
+      "reflection",
+      "giving back",
+    ],
+    recommendedSpreads: [
+      "spiritual_guidance",
+      "tree_of_life",
+      "past_life_karma",
+    ],
   },
   last_quarter: {
     phase: "last_quarter",
     name: "Last Quarter",
-    description: "Half the moon is illuminated again, representing release and forgiveness",
-    tarotThemes: ["release", "forgiveness", "letting go", "breaking patterns", "healing"],
-    recommendedSpreads: ["shadow_work", "full_moon_release", "elemental_balance"]
+    description:
+      "Half the moon is illuminated again, representing release and forgiveness",
+    tarotThemes: [
+      "release",
+      "forgiveness",
+      "letting go",
+      "breaking patterns",
+      "healing",
+    ],
+    recommendedSpreads: [
+      "shadow_work",
+      "full_moon_release",
+      "elemental_balance",
+    ],
   },
   waning_crescent: {
     phase: "waning_crescent",
     name: "Waning Crescent",
-    description: "A thin crescent before the new moon, representing rest and preparation",
-    tarotThemes: ["rest", "preparation", "introspection", "wisdom", "surrender"],
-    recommendedSpreads: ["single_card", "daily_guidance", "spiritual_guidance"]
-  }
+    description:
+      "A thin crescent before the new moon, representing rest and preparation",
+    tarotThemes: [
+      "rest",
+      "preparation",
+      "introspection",
+      "wisdom",
+      "surrender",
+    ],
+    recommendedSpreads: ["single_card", "daily_guidance", "spiritual_guidance"],
+  },
 };
 
 /** Chinese localization of the moon phase catalog. */
@@ -148,7 +229,8 @@ const PHASE_DATA_ZH: Record<
  * where 0 is a new moon and 0.5 is a full moon
  */
 function getCyclePosition(date: Date): number {
-  const daysSinceKnownNewMoon = (date.getTime() - KNOWN_NEW_MOON_UTC) / MILLISECONDS_PER_DAY;
+  const daysSinceKnownNewMoon =
+    (date.getTime() - KNOWN_NEW_MOON_UTC) / MILLISECONDS_PER_DAY;
   const cycles = daysSinceKnownNewMoon / LUNAR_CYCLE_DAYS;
   // Normalized modulo so dates before the reference new moon stay in [0, 1)
   return ((cycles % 1) + 1) % 1;
@@ -159,7 +241,10 @@ function getCyclePosition(date: Date): number {
  * The "new" window wraps around the end of the cycle: [0.9375, 1) and [0, 0.0625)
  */
 function getPhaseName(cyclePosition: number): MoonPhaseName {
-  const index = Math.floor(((cyclePosition + PHASE_WINDOW_HALF_WIDTH) % 1) * PHASE_ORDER.length) % PHASE_ORDER.length;
+  const index =
+    Math.floor(
+      ((cyclePosition + PHASE_WINDOW_HALF_WIDTH) % 1) * PHASE_ORDER.length,
+    ) % PHASE_ORDER.length;
   return PHASE_ORDER[index];
 }
 
@@ -170,27 +255,40 @@ function getPhaseName(cyclePosition: number): MoonPhaseName {
 export function calculateMoonPhase(date: Date = new Date()): MoonPhaseInfo {
   const cyclePosition = getCyclePosition(date);
   // Illuminated fraction of the lunar disc, rounded to 2 decimals
-  const illumination = Math.round(((1 - Math.cos(2 * Math.PI * cyclePosition)) / 2) * 100) / 100;
+  const illumination =
+    Math.round(((1 - Math.cos(2 * Math.PI * cyclePosition)) / 2) * 100) / 100;
 
   return {
     ...PHASE_DATA[getPhaseName(cyclePosition)],
-    illumination
+    illumination,
   };
 }
 
 /**
  * Get the next significant moon phase
  */
-export function getNextMoonPhase(currentDate: Date = new Date()): { phase: MoonPhaseInfo; date: Date } {
+export function getNextMoonPhase(currentDate: Date = new Date()): {
+  phase: MoonPhaseInfo;
+  date: Date;
+} {
   const cyclePosition = getCyclePosition(currentDate);
 
   // Phase window boundaries sit at k/8 + 1/16; find the first one after the current position
-  const nextBoundary = (Math.floor((cyclePosition - PHASE_WINDOW_HALF_WIDTH) * PHASE_ORDER.length) + 1) / PHASE_ORDER.length + PHASE_WINDOW_HALF_WIDTH;
+  const nextBoundary =
+    (Math.floor(
+      (cyclePosition - PHASE_WINDOW_HALF_WIDTH) * PHASE_ORDER.length,
+    ) +
+      1) /
+      PHASE_ORDER.length +
+    PHASE_WINDOW_HALF_WIDTH;
   // Small nudge so the computed date lands inside the next window rather than on its edge
   const epsilonDays = 0.001;
-  const daysUntilNextPhase = (nextBoundary - cyclePosition) * LUNAR_CYCLE_DAYS + epsilonDays;
+  const daysUntilNextPhase =
+    (nextBoundary - cyclePosition) * LUNAR_CYCLE_DAYS + epsilonDays;
 
-  const nextDate = new Date(currentDate.getTime() + daysUntilNextPhase * MILLISECONDS_PER_DAY);
+  const nextDate = new Date(
+    currentDate.getTime() + daysUntilNextPhase * MILLISECONDS_PER_DAY,
+  );
   const nextPhase = calculateMoonPhase(nextDate);
 
   return { phase: nextPhase, date: nextDate };
@@ -205,25 +303,57 @@ export function getMoonPhaseRecommendations(
 ): string {
   const moonInfo = calculateMoonPhase(date);
   const zh = PHASE_DATA_ZH[moonInfo.phase];
-  const phaseName = pick(language, moonInfo.name, zh.name);
-  const description = pick(language, moonInfo.description, zh.description);
-  const themes = language === "zh" ? zh.tarotThemes : moonInfo.tarotThemes;
+  const phaseName = pick(
+    language,
+    moonInfo.name,
+    zh.name,
+    `${PHASE_DATA_RU[moonInfo.phase].name}`,
+  );
+  const description = pick(
+    language,
+    moonInfo.description,
+    zh.description,
+    `${PHASE_DATA_RU[moonInfo.phase].description}`,
+  );
+  const themes =
+    language === "ru"
+      ? PHASE_DATA_RU[moonInfo.phase].tarotThemes
+      : language === "zh"
+        ? zh.tarotThemes
+        : moonInfo.tarotThemes;
 
   let recommendations = pick(
     language,
     `# 🌙 ${phaseName} Tarot Guidance\n\n`,
     `# 🌙 ${phaseName}塔罗指引\n\n`,
+    `# 🌙 Лунный ориентир Таро: ${phaseName}\n\n`,
   );
-  recommendations += `${pick(language, "**Current Phase:**", "**当前月相：**")} ${phaseName}\n`;
-  recommendations += `${pick(language, "**Illumination:**", "**照亮度：**")} ${Math.round(moonInfo.illumination * 100)}%\n\n`;
-  recommendations += `${pick(language, "**Description:**", "**描述：**")} ${description}\n\n`;
+  recommendations += `${pick(
+    language,
+    "**Current Phase:**",
+    "**当前月相：**",
+    `**Текущая фаза:**`,
+  )} ${phaseName}\n`;
+  recommendations += `${pick(
+    language,
+    "**Illumination:**",
+    "**照亮度：**",
+    `**Освещённость:**`,
+  )} ${Math.round(moonInfo.illumination * 100)}%\n\n`;
+  recommendations += `${pick(
+    language,
+    "**Description:**",
+    "**描述：**",
+    `**Описание:**`,
+  )} ${description}\n\n`;
 
   recommendations += pick(
     language,
     `## Key Themes for This Phase:\n`,
     `## 本月相的关键主题：\n`,
+    `## Основные темы этой фазы:\n`,
   );
-  themes.forEach(theme => {
+  themes.forEach((theme) => {
     recommendations += `• ${theme}\n`;
   });
 
@@ -231,6 +361,7 @@ export function getMoonPhaseRecommendations(
     language,
     `\n## Recommended Spreads:\n`,
     `\n## 推荐牌阵：\n`,
+    `\n## Рекомендуемые расклады:\n`,
   );
   moonInfo.recommendedSpreads.forEach((spreadId) => {
     const name = isValidSpreadType(spreadId)
@@ -240,14 +371,30 @@ export function getMoonPhaseRecommendations(
   });
 
   const next = getNextMoonPhase(date);
-  const nextName = pick(language, next.phase.name, PHASE_DATA_ZH[next.phase.phase].name);
+  const nextName = pick(
+    language,
+    next.phase.name,
+    PHASE_DATA_ZH[next.phase.phase].name,
+    `${PHASE_DATA_RU[next.phase.phase].name}`,
+  );
   const nextDate = next.date.toISOString().slice(0, 10);
   recommendations += pick(
     language,
     `\n**Next Phase:** ${nextName} (approximately ${nextDate})\n`,
     `\n**下一个月相：** ${nextName}（约 ${nextDate}）\n`,
+    `\n**Следующая фаза:** ${nextName} (примерно ${nextDate})\n`,
   );
 
   return recommendations;
 }
 
+export function localizedMoonPhase(
+  info: MoonPhaseInfo,
+  language: Language,
+): MoonPhaseInfo {
+  return language === "ru"
+    ? { ...info, ...PHASE_DATA_RU[info.phase] }
+    : language === "zh"
+      ? { ...info, ...PHASE_DATA_ZH[info.phase] }
+      : info;
+}

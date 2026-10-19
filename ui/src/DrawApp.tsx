@@ -20,6 +20,8 @@ import type { DrawClient, DrawError, Language } from "./types.js";
 import { useDrawSession } from "./useDrawSession.js";
 import { useWebMcp } from "./webmcp/useWebMcp.js";
 
+import { errorCopy } from "./error-copy.js";
+
 interface DrawAppProps {
   client: DrawClient;
 }
@@ -374,7 +376,7 @@ function ErrorBanner({
     <div className="error-banner" role="alert">
       <div>
         <strong>{t(language, "error")}</strong>
-        <span>{error.message}</span>
+        <span>{errorCopy(error, language)}</span>
       </div>
       {children}
       <div className="error-banner__actions">
