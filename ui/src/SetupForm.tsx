@@ -1,3 +1,4 @@
+import { ThemedSelect } from "./ThemedSelect.js";
 import { type FormEvent, type ReactNode, useRef, useState } from "react";
 import { getSpreadPickerCatalog } from "@tarot/readings/spread-localizations.js";
 import { SetupShell } from "./SetupShell.js";
@@ -163,20 +164,21 @@ export function SetupForm({
           />
         </label>
         {readingKind === "spread" ? (
-          <label className="field field--wide">
+          <div className="field field--wide">
             <span>{t(language, "spread")}</span>
-            <select
+            <ThemedSelect
               value={spreadType}
+              aria-label={t(language, "spread")}
               aria-describedby="spread-description"
-              onChange={(event) => setSpreadType(event.target.value)}
+              onValueChange={setSpreadType}
             >
               {catalog.map((spread) => (
                 <option key={spread.id} value={spread.id}>
                   {spread.name} · {spread.cardCount}
                 </option>
               ))}
-            </select>
-          </label>
+            </ThemedSelect>
+          </div>
         ) : null}
         {(readingKind === "spread" || readingKind === "daily") && preview ? (
           <div className="spread-preview">

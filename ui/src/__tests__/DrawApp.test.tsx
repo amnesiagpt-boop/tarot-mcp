@@ -1,4 +1,5 @@
-import { act, render, screen, waitFor, within } from "@testing-library/react";
+import { renderEnglish as render } from "./render-english.js";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { StrictMode } from "react";
 import { vi } from "vitest";
@@ -319,7 +320,7 @@ describe("DrawApp widget state recovery", () => {
     );
     expect(screen.queryByRole("heading", { name: "Your reading" })).toBeNull();
     expect(
-      screen.getByText("Waiting for the reading to begin…"),
+      screen.getByText("Ожидаем начала расклада…"),
     ).not.toBeNull();
     act(() => second.host.onBegin(draw));
     expect(
@@ -631,7 +632,8 @@ describe("DrawApp", () => {
     const user = userEvent.setup();
     const { client } = createClient();
     render(<DrawApp client={client} />);
-    await user.selectOptions(screen.getByLabelText("Language"), "zh");
+    await user.click(screen.getByRole("combobox",{name:"Language"}));
+    await user.click(screen.getByRole("option",{name:"中文"}));
     expect(screen.getByRole("heading", { name: "选择你的牌" })).not.toBeNull();
     expect(screen.getByRole("button", { name: "进入抽牌仪式" })).not.toBeNull();
     await waitFor(() => expect(document.documentElement.lang).toBe("zh"));
@@ -773,7 +775,7 @@ describe("DrawApp", () => {
 
     render(<DrawApp client={client} />);
     expect(
-      screen.getByText("Waiting for the reading to begin…"),
+      screen.getByText("Ожидаем начала расклада…"),
     ).not.toBeNull();
 
     act(() => {

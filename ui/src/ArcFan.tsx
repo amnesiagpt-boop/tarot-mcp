@@ -17,7 +17,6 @@ import {
   arcCardLeft,
   arcCurve,
   arcStripWidth,
-  proximityLift,
 } from "./deck-order.js";
 import { type FlipRect, measure, prefersReducedMotion } from "./flip.js";
 import { t } from "./i18n.js";
@@ -25,7 +24,7 @@ import { nextGridIndex } from "./selection.js";
 import type { Language } from "./types.js";
 
 /** How far a hover reaches along the spread, and how high it lifts the card. */
-const LIFT_RADIUS = 128;
+
 const LIFT_AMOUNT = 26;
 const FOCUS_LIFT = 30;
 const SELECTED_LIFT = 14;
@@ -35,20 +34,20 @@ const SETTLE_RATE = 0.24;
 const IDLE_MS = 420;
 
 function configFor(width: number, height: number): ArcConfig {
-  // Fit the same curve and lift choreography to the space allocated by the table.
+  // Keep complete card backs below the lift clearance and above the scrollbar.
   if (height < 285) {
-    const cardWidth = Math.max(48, Math.min(92, (height - 80) / 1.95));
+    const cardWidth = Math.max(44, Math.min(92, (height - 46) / 1.5));
     return {
       step: 44,
       cardWidth,
-      depth: cardWidth * 0.45,
+      depth: 0,
       reach: Math.max(300, width * 0.6),
     };
   }
   // The exposed step is the effective hit strip once neighbouring cards overlap.
-  if (width < 560) return { step: 44, cardWidth: 72, depth: 56, reach: 300 };
-  if (width < 900) return { step: 44, cardWidth: 80, depth: 74, reach: 420 };
-  return { step: 48, cardWidth: 92, depth: 104, reach: 620 };
+  if (width < 560) return { step: 44, cardWidth: 72, depth: 0, reach: 300 };
+  if (width < 900) return { step: 44, cardWidth: 80, depth: 0, reach: 420 };
+  return { step: 48, cardWidth: 92, depth: 0, reach: 620 };
 }
 
 export interface ArcFanHandle {
@@ -150,7 +149,7 @@ export const ArcFan = forwardRef<ArcFanHandle, ArcFanProps>(function ArcFan(
       let target =
         stripPointer === undefined
           ? 0
-          : proximityLift(centre - stripPointer, LIFT_RADIUS, LIFT_AMOUNT);
+          : Math.abs(centre - stripPointer) < config.step / 2 ? LIFT_AMOUNT : 0;
       if (index === focusedIndex) target = Math.max(target, FOCUS_LIFT);
       if (selectedSet.has(slotIds[index]))
         target = Math.max(target, SELECTED_LIFT);

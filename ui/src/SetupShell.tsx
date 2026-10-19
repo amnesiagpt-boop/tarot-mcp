@@ -1,3 +1,4 @@
+import { ThemedSelect } from "./ThemedSelect.js";
 import type { ReactNode } from "react";
 import { VISUAL_CARD_ASSET_BASE } from "@tarot/shared/artwork.js";
 import { t } from "./i18n.js";
@@ -39,20 +40,18 @@ export function SetupShell({
             {language === "ru" ? "Таро" : "Tarot"}
           </a>
         )}
-        <label className="language-picker">
+        <div className="language-picker">
           <span className="sr-only">{t(language, "language")}</span>
-          <select
+          <ThemedSelect
             aria-label={t(language, "language")}
             value={language}
-            onChange={(event) =>
-              onLanguageChange(event.target.value as Language)
-            }
+            onValueChange={(value) => onLanguageChange(value as Language)}
           >
             <option value="zh">中文</option>
             <option value="ru">Русский</option>
             <option value="en">English</option>
-          </select>
-        </label>
+          </ThemedSelect>
+        </div>
       </header>
       <main className="setup-layout">
         <section className="setup-intro" aria-labelledby="setup-title">
