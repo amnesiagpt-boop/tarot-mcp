@@ -3,6 +3,7 @@ import { type FormEvent, type ReactNode, useRef, useState } from "react";
 import { getSpreadPickerCatalog } from "@tarot/readings/spread-localizations.js";
 import { SetupShell } from "./SetupShell.js";
 import { ConnectionSettings } from "./ConnectionSettings.js";
+import { PositionKey } from "./PositionKey.js";
 import { t } from "./i18n.js";
 import type {
   BeginReadingInput,
@@ -154,7 +155,7 @@ export function SetupForm({
               if (invalidField === "question") setInvalidField(undefined);
             }}
             placeholder={t(language, "questionPlaceholder")}
-            rows={3}
+            rows={2}
             maxLength={2000}
             required={readingKind !== "daily"}
             aria-invalid={invalidField === "question"}
@@ -183,14 +184,7 @@ export function SetupForm({
         {(readingKind === "spread" || readingKind === "daily") && preview ? (
           <div className="spread-preview">
             <p id="spread-description">{preview.description}</p>
-            <ol>
-              {preview.positions.map((position, index) => (
-                <li key={index}>
-                  <span>{index + 1}</span>
-                  {position.name}
-                </li>
-              ))}
-            </ol>
+            <PositionKey key={preview.id} language={language} names={preview.positions.map(position => position.name)} pageSize={6} />
           </div>
         ) : null}
         {readingKind === "moon" ? (
@@ -224,7 +218,7 @@ export function SetupForm({
                   if (invalidField === "positions") setInvalidField(undefined);
                 }}
                 placeholder={t(language, "customPositionsPlaceholder")}
-                rows={6}
+                rows={4}
                 aria-invalid={invalidField === "positions"}
                 aria-describedby={
                   invalidField === "positions" ? "setup-error" : undefined

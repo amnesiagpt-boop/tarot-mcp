@@ -130,6 +130,8 @@ export function ReadingBoard({
     status: initialContinuationSent ? "sent" : "idle",
   }));
   const [detailIndex, setDetailIndex] = useState<number>();
+  const detailOpener = useRef<HTMLElement | null>(null);
+  const readingScroll = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   const fullscreen = useFullscreen(client);
   const interpretationHeading = useRef<HTMLHeadingElement>(null);
@@ -184,7 +186,35 @@ export function ReadingBoard({
     }
   }, [allRevealed, continuation.status]);
 
-  const closeDetails = useCallback(() => setDetailIndex(undefined), []);
+  const openDetails = (index: number) => {
+    detailOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    readingScroll.current = document.documentElement.scrollTop;
+    if (client.target === "web") {
+      const url = new URL(location.href);
+      url.searchParams.set("card", String(index + 1));
+      history.pushState({ tarotCard: index + 1 }, "", url);
+    }
+    setDetailIndex(index);
+  };
+  const closeDetails = useCallback(() => {
+    setDetailIndex(undefined);
+    if (client.target === "web" && new URL(location.href).searchParams.has("card")) history.back();
+  }, [client.target]);
+  useEffect(() => {
+    if (client.target !== "web") return;
+    const restore = () => {
+      const value = new URL(location.href).searchParams.get("card");
+      const index = value ? Number(value) - 1 : -1;
+      setDetailIndex(Number.isInteger(index) && revealed.has(index) ? index : undefined);
+    };
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, [client.target, revealed]);
+  useEffect(() => {
+    if (detailIndex !== undefined || !detailOpener.current) return;
+    detailOpener.current.focus({ preventScroll: true });
+    document.documentElement.scrollTop = readingScroll.current;
+  }, [detailIndex]);
 
   const turn = useCallback((index: number) => {
     setReveal((current) =>
@@ -283,7 +313,7 @@ export function ReadingBoard({
         value: `${card.displayName} · ${orientationLabel(language, card)}`,
         action: {
           label: `${describeTurn(index)} ${t(language, "details")}`,
-          onActivate: () => setDetailIndex(index),
+          onActivate: () => openDetails(index),
         },
       };
     }
@@ -317,7 +347,7 @@ export function ReadingBoard({
       continuation.status === "sending");
 
   return (
-    <main className="reading-shell">
+    <><main className="reading-shell" data-expanded={allRevealed} hidden={detailIndex !== undefined}>
       <RitualProgress
         current={allRevealed ? "interpret" : "reveal"}
         language={language}
@@ -360,7 +390,7 @@ export function ReadingBoard({
               cardIndex={index}
               backImageUri={backImageUri}
               revealed={revealed.has(index)}
-              onOpen={() => setDetailIndex(index)}
+              onOpen={() => openDetails(index)}
               onTurn={() => turn(index)}
               language={language}
             />
@@ -371,6 +401,8 @@ export function ReadingBoard({
         ))}
       </ReadingCloth>
       <PositionKey
+        pageSize={client.target === "web" ? 12 : undefined}
+        activeIndex={announced}
         language={language}
         names={positions.map(({ name }) => name)}
         values={positions.map(({ value }) => value)}
@@ -479,6 +511,7 @@ export function ReadingBoard({
         </section>
       ) : null}
 
+    </main>
       {detailIndex !== undefined ? (
         <CardDetails
           card={reading.cards[detailIndex]}
@@ -487,6 +520,6 @@ export function ReadingBoard({
           onClose={closeDetails}
         />
       ) : null}
-    </main>
+    </>
   );
 }

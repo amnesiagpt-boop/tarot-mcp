@@ -8,6 +8,24 @@ const list = () =>
   screen.getByRole("list", { name: t("en", "spreadPositions") });
 
 describe("PositionKey", () => {
+  it("keeps every dense position reachable in compact pages with its original action index", async () => {
+    const original = window.matchMedia;
+    Object.defineProperty(window, "matchMedia", { configurable: true, value: vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })) });
+    const user = userEvent.setup();
+    const choose = vi.fn();
+    const names = Array.from({ length: 8 }, (_, i) => `Position ${i + 1}`);
+    const view = render(<PositionKey language="en" names={names} pageSize={6} actions={names.map((name, index) => ({ label: name, onActivate: () => choose(index) }))} />);
+    expect(within(list()).getAllByRole("listitem")).toHaveLength(3);
+    await user.click(screen.getByRole("button", { name: "Next positions" }));
+    await user.click(screen.getByRole("button", { name: "Position 5" }));
+    expect(choose).toHaveBeenCalledWith(4);
+    await user.click(screen.getByRole("button", { name: "Next positions" }));
+    expect(within(list()).getAllByRole("listitem")).toHaveLength(2);
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Next positions" }).disabled).toBe(true);
+    view.rerender(<PositionKey language="en" names={names} pageSize={6} activeIndex={0} />);
+    expect(within(list()).getByText("Position 1")).not.toBeNull();
+    Object.defineProperty(window, "matchMedia", { configurable: true, value: original });
+  });
   it("reads values and actions by position index and adds nothing for the gaps", async () => {
     const user = userEvent.setup();
     const open = vi.fn();

@@ -124,6 +124,8 @@ function SelectionStaging({
         ))}
       </ReadingCloth>
       <PositionKey
+        pageSize={12}
+        activeIndex={selected.length - 1}
         language={language}
         names={names}
         actions={positions.map(({ action }) => action)}

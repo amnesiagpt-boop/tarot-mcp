@@ -12,6 +12,7 @@ import { DrawStage } from "./DrawStage.js";
 import { ReadingBoard } from "./ReadingBoard.js";
 import { RitualStage } from "./RitualStage.js";
 import { SetupForm } from "./SetupForm.js";
+import { SiteHeader } from "./SiteHeader.js";
 import { cutDeck, shuffleWithSeed } from "./deck-order.js";
 import { type FlipRect, prefersReducedMotion } from "./flip.js";
 import { t } from "./i18n.js";
@@ -29,6 +30,7 @@ interface DrawAppProps {
 export function DrawApp({ client }: DrawAppProps) {
   return (
     <div className="draw-app" data-surface={client.target}>
+      {client.target === "web" ? <SiteHeader /> : null}
       <DrawTable client={client} />
     </div>
   );

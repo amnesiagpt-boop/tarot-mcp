@@ -615,16 +615,17 @@ describe("DrawApp", () => {
     });
     expect((foolCard as HTMLButtonElement).disabled).toBe(false);
     await user.click(foolCard);
-    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(screen.getByRole("main", { name: "The Fool" })).not.toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByRole("heading", { name: "The Fool" })).not.toBeNull();
     const close = screen.getByRole("button", { name: "Close" });
     expect(document.activeElement).toBe(close);
     await user.tab();
-    expect(document.activeElement).toBe(close);
+    expect(document.activeElement).not.toBe(close);
     await user.tab({ shift: true });
     expect(document.activeElement).toBe(close);
     await user.click(screen.getByRole("button", { name: "Close" }));
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("main", { name: "The Fool" })).toBeNull();
     expect(document.activeElement).toBe(foolCard);
   });
 

@@ -227,9 +227,9 @@ describe("ReadingBoard reveal", () => {
 
     // A revealed card opens its details even while the others stay face down.
     await user.click(revealedCard("The Fool")!);
-    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(screen.getByRole("main", { name: /The Fool|The Magician/ })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: label("close") }));
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("main", { name: /The Fool|The Magician/ })).toBeNull();
 
     await user.click(
       screen.getByRole("button", { name: label("turnCard", { number: 3 }) }),
@@ -327,12 +327,12 @@ describe("ReadingBoard reveal", () => {
     expect(opened.getAttribute("aria-label")).toContain("The Magician");
     expect(opened.getAttribute("aria-label")).toContain(label("details"));
     await user.click(opened);
-    const dialog = screen.getByRole("dialog");
+    const dialog = screen.getByRole("main", { name: /The Fool|The Magician/ });
     expect(
       within(dialog).getByRole("heading", { name: "The Magician" }),
     ).not.toBeNull();
     await user.click(screen.getByRole("button", { name: label("close") }));
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("main", { name: /The Fool|The Magician/ })).toBeNull();
     expect(document.activeElement).toBe(opened);
 
     // The card on the cloth and the list stay in step: turning from the cloth updates the list.

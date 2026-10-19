@@ -25,7 +25,7 @@ export function SetupShell({
         {t(language, "skipToForm")}
       </a>
       <RitualProgress current="intention" language={language} />
-      <header className="setup-header">
+      <div className="setup-header">
         {client.target === "mcp" ? (
           <span className="wordmark">
             {language === "ru" ? "Таро" : "Tarot"}
@@ -52,7 +52,7 @@ export function SetupShell({
             <option value="en">English</option>
           </ThemedSelect>
         </div>
-      </header>
+      </div>
       <main className="setup-layout">
         <section className="setup-intro" aria-labelledby="setup-title">
           <p className="setup-eyebrow">{t(language, "deckEdition")}</p>
