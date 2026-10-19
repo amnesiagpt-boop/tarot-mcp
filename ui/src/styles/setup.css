@@ -92,7 +92,7 @@
   );
   content: "";
 }
-.deck-preview__cards img {
+.deck-preview__cards :is(img,.deck-preview__back) {
   position: absolute;
   width: 38%;
   height: auto;
@@ -375,7 +375,7 @@ textarea {
     height: auto;
     aspect-ratio: 2 / 3;
   }
-  .deck-preview__cards img {
+  .deck-preview__cards :is(img,.deck-preview__back) {
     width: 85%;
     border-radius: 4px;
   }

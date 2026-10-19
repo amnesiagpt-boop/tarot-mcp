@@ -61,6 +61,10 @@ export function SetupShell({
           <figure className="deck-preview">
             <div className="deck-preview__cards" aria-hidden="true">
               {(["moon", "back", "star"] as const).map((cardId) => {
+                // Reuse the theme's artwork without duplicating it in the MCP HTML.
+                if (cardId === "back") {
+                  return <span key={cardId} className="deck-preview__back" />;
+                }
                 const source =
                   client.target === "mcp"
                     ? client.getPreviewImage?.(cardId)
