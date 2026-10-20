@@ -187,7 +187,6 @@ export async function migrateLegacyReadings() {
         card: { id?: string; name?: string };
         title?: string;
         meaning?: string;
-        originalMeaning?: string;
         isReversed?: boolean;
       }) => {
         const id = canonicalTarotId(p.card);
@@ -196,7 +195,7 @@ export async function migrateLegacyReadings() {
           name: p.card.name ?? id,
           displayName: p.card.name ?? id,
           position: p.title,
-          meaning: [p.meaning, p.originalMeaning].filter(Boolean).join("\n\n"),
+          meaning: p.meaning,
           orientation: p.isReversed ? "reversed" : "upright",
           imageUri: `/assets/cards/midnight-art-nouveau-v1/${id}.webp`,
         };
