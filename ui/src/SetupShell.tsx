@@ -71,7 +71,7 @@ export function SetupShell({
                   <img
                     key={`${deckId}:${cardId}`}
                     className="deck-preview__sample"
-                    src={`${getDeck(deckId).assetBase}/${getDeck(deckId).system === "playing" ? "" : "mcp/"}${cardId}.webp?v=classic-20261020`}
+                    src={`${getDeck(deckId).assetBase}/${cardId}.webp?v=classic-20261020`}
                     width="400"
                     height="650"
                     alt=""
