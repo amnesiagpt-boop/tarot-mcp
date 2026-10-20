@@ -1,4 +1,8 @@
-# Midnight Art Nouveau Tarot Artwork
+# Card illustration licences
+
+Active classic faces for Kod Dushi are documented in `CLASSIC-DECK-SOURCES.md` and `classic-decks-manifest.json`: Rider–Waite–Smith and historical Petit Lenormand scans are public domain; the playing-card SVG originals are CC0. Stable public paths under `cards/midnight-art-nouveau-v1/` now contain the replacement classic faces. The following notice describes the historical generated collection and its provenance, not ownership of the replacement classic art.
+
+# Historical Midnight Art Nouveau Tarot Artwork
 
 Copyright (c) 2026 Morax
 

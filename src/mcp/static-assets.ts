@@ -87,7 +87,9 @@ export function mountVisualWebAssets(
 
   if (cardDirectory) {
     app.use(
-      HTTP_ENDPOINTS.visualCardAssets,
+      // cardDirectory contains versioned deck folders. Mount their common
+      // parent so a versioned URL cannot fall through to an old root image.
+      "/assets/cards",
       express.static(cardDirectory, {
         index: false,
         fallthrough: true,

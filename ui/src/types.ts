@@ -1,5 +1,6 @@
 export type Language = "en" | "zh" | "ru";
 export type ReadingKind = "spread" | "daily" | "moon" | "custom";
+export type { DeckId } from "@tarot/shared/decks.js";
 
 export interface DrawError extends Error {
   code?: string;
@@ -13,6 +14,10 @@ export interface CustomSpreadInput {
 }
 
 interface BeginReadingBase {
+  deckId?: import("@tarot/shared/decks.js").DeckId;
+  reversalsEnabled?: boolean;
+  tablePositions?: Array<{name:string;meaning:string}>;
+  tableSpreadName?: string;
   readingKind: ReadingKind;
   language: Language;
   idempotencyKey?: string;
@@ -61,6 +66,7 @@ export type BeginReadingInput =
   | CustomReadingInput;
 
 export interface BeginReadingInputSnapshot {
+  deckId?: import("@tarot/shared/decks.js").DeckId;
   readingKind?: ReadingKind;
   spreadType?: string;
   question?: string;
@@ -75,6 +81,9 @@ export interface DrawSlot {
 }
 
 export interface BeginReadingPayload {
+  deckId?: import("@tarot/shared/decks.js").DeckId;
+  deckName?: string;
+  deckSize?: number;
   drawId: string;
   readingKind: ReadingKind;
   spreadType: string;
@@ -106,6 +115,10 @@ export interface ReadingCard {
 }
 
 export interface ConfirmedReading {
+  deckId?: import("@tarot/shared/decks.js").DeckId;
+  deckName?: string;
+  rulesVersion?: string;
+  sources?: string[];
   readingId?: string;
   sessionId?: string;
   drawId?: string;

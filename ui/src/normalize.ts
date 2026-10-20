@@ -10,7 +10,10 @@ import type {
   ReadingKind,
 } from "./types.js";
 
+import { DECKS, getDeck, type DeckId } from "@tarot/shared/decks.js";
 type UnknownRecord = Record<string, unknown>;
+const deckIdValue = (value: unknown): DeckId | undefined =>
+  DECKS.find((d) => d.id === value)?.id;
 
 export function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -163,6 +166,9 @@ export function normalizeBeginPayload(
 
   return {
     drawId: stringValue(payload.drawId, payload.draw_id) ?? "",
+    deckId: deckIdValue(payload.deckId) ?? input.deckId,
+    deckName: stringValue(payload.deckName),
+    deckSize: numberValue(payload.deckSize, deck.size),
     readingKind,
     spreadType,
     spreadName:
@@ -185,9 +191,10 @@ export function assertCompleteVisualDeck(payload: BeginReadingPayload): void {
     throw new Error("The server did not return a drawId.");
   }
   const uniqueSlots = new Set(payload.slots.map(({ slotId }) => slotId));
-  if (payload.slots.length !== 78 || uniqueSlots.size !== 78) {
+  const size = getDeck(payload.deckId).size;
+  if (payload.slots.length !== size || uniqueSlots.size !== size) {
     throw new Error(
-      "The visual deck metadata is incomplete. Waiting for 78 opaque card slots; start a new draw if it does not arrive.",
+      `The visual deck metadata is incomplete. Waiting for ${size} opaque card slots; start a new draw if it does not arrive.`,
     );
   }
   if (!payload.deckBackImageUri) {
@@ -260,6 +267,12 @@ export function normalizeConfirmedReading(
   const spread = isRecord(nested.spread) ? nested.spread : {};
   return {
     readingId: stringValue(nested.readingId, nested.id),
+    deckId: deckIdValue(nested.deckId) ?? begin?.deckId,
+    deckName: stringValue(nested.deckName, begin?.deckName),
+    rulesVersion: stringValue(nested.rulesVersion),
+    sources: Array.isArray(nested.sources)
+      ? nested.sources.filter((s): s is string => typeof s === "string")
+      : undefined,
     sessionId: stringValue(nested.sessionId),
     drawId: stringValue(nested.drawId, begin?.drawId),
     spreadType,

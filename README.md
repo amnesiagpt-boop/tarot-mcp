@@ -168,3 +168,11 @@ rendering caveats.
 
 Code is licensed under [MIT](LICENSE). Artwork has its own documented provenance
 and licensing terms.
+
+## Kod Dushi: classic decks and saved readings (20 October 2026)
+
+The website test branch includes four independent deck systems: RWS Tarot 78, classic Petit Lenormand 36, and playing cards 36/52. See assets/CLASSIC-DECK-SOURCES.md and assets/classic-decks-manifest.json for PD/CC0 artwork credits and hashes. Active face images replace the earlier generated deck; the minimal rose back remains.
+
+src/table contains validated opaque draws, idempotent confirmation and independent system adapters. Tarot reversals default to off. Lenormand combinations are an explicitly sourced limited whitelist; unknown combinations are not invented. No external AI is connected. Existing MCP and lunar flows retain their interfaces. The web archive supports manual save, legacy import, filtering, pagination, export/import and deletion without a ten-reading cap. It remains browser/origin local.
+
+Verified: TypeScript and both UI builds; 141 UI tests and 11 new server/static-asset tests; four full browser reading flows and a 17-entry archive. Windows Chromium was used; native macOS Safari remains untested.

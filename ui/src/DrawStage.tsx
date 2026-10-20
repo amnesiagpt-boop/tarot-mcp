@@ -257,7 +257,7 @@ export function DrawStage({
       <section className="deck-section" aria-labelledby="deck-title">
         <div className="deck-section__header">
           <h2 id="deck-title">{t(language, "deckTitle")}</h2>
-          <p>{t(language, "arcHint")}</p>
+          <p>{t(language, "arcHint", {count:draw.slots.length})}</p>
         </div>
         <p className="sr-only" id="deck-help">
           {t(language, "keyboardHint")}

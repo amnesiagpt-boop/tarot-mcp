@@ -7,6 +7,7 @@ import {
 import { logger } from "../../tarot/shared/logger.js";
 import { HTTP_ENDPOINTS, MCP_SERVER_INFO, TOOL_NAMES } from "../public-api.js";
 import type { TarotServer, ToolResult } from "../tarot-service.js";
+import { createCardTableRouter } from "../../table/http-router.js";
 
 function query(req: Request, name: string): string | undefined {
   const value = req.query[name];
@@ -35,6 +36,7 @@ function sendToolResult(
 /** REST adapters share validation and error handling; domain work stays in the service. */
 export function createApiRouter(tarotServer: TarotServer): Router {
   const router = Router();
+  router.use(createCardTableRouter());
 
   const toolRoute =
     (

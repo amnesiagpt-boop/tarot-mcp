@@ -12,3 +12,6 @@
 
 @import "./rose-dawn.css";
 @import "./compact.css";
+
+@import './atmosphere.css';
+@import './card-table.css';

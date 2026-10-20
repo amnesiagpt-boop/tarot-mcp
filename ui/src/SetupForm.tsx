@@ -5,6 +5,8 @@ import { SetupShell } from "./SetupShell.js";
 import { ConnectionSettings } from "./ConnectionSettings.js";
 import { PositionKey } from "./PositionKey.js";
 import { t } from "./i18n.js";
+import { DECKS, getDeck, type DeckId } from "@tarot/shared/decks.js";
+import { getTableSpreads } from "./table-spreads.js";
 import type {
   BeginReadingInput,
   DrawClient,
@@ -36,6 +38,9 @@ export function SetupForm({
   notice?: ReactNode;
 }) {
   const [question, setQuestion] = useState("");
+  const [deckId, setDeckId] = useState<DeckId>("tarot-classic");
+  const [reversalsEnabled, setReversalsEnabled] = useState(false);
+  const deck = getDeck(deckId);
   const [readingKind, setReadingKind] = useState<ReadingKind>("spread");
   const [spreadType, setSpreadType] = useState("three_card");
   const [customDate, setCustomDate] = useState("");
@@ -44,7 +49,10 @@ export function SetupForm({
   const questionRef = useRef<HTMLTextAreaElement>(null);
   const positionsRef = useRef<HTMLTextAreaElement>(null);
   const [invalidField, setInvalidField] = useState<"question" | "positions">();
-  const catalog = getSpreadPickerCatalog(language);
+  const catalog =
+    deck.system === "tarot"
+      ? getSpreadPickerCatalog(language)
+      : getTableSpreads(language);
   const preview = catalog.find(
     (spread) =>
       spread.id === (readingKind === "daily" ? "daily_guidance" : spreadType),
@@ -69,14 +77,31 @@ export function SetupForm({
     }
     setInvalidField(undefined);
     const normalizedQuestion = question.trim();
+    const tableOptions =
+      client.target === "web"
+        ? {
+            deckId,
+            reversalsEnabled:
+              deck.system === "tarot" &&
+              readingKind !== "moon" &&
+              reversalsEnabled,
+            tablePositions: preview?.positions.map((p) => ({
+              name: p.name,
+              meaning: p.meaning,
+            })),
+            tableSpreadName: preview?.name,
+          }
+        : {};
     if (readingKind === "daily") {
       onSubmit({
+        ...tableOptions,
         readingKind,
         language,
         ...(normalizedQuestion ? { question: normalizedQuestion } : {}),
       });
     } else if (readingKind === "moon") {
       onSubmit({
+        ...tableOptions,
         readingKind,
         question: normalizedQuestion,
         language,
@@ -84,6 +109,7 @@ export function SetupForm({
       });
     } else if (readingKind === "custom") {
       onSubmit({
+        ...tableOptions,
         readingKind,
         question: normalizedQuestion,
         language,
@@ -94,6 +120,7 @@ export function SetupForm({
       });
     } else {
       onSubmit({
+        ...tableOptions,
         readingKind,
         spreadType,
         question: normalizedQuestion,
@@ -108,6 +135,7 @@ export function SetupForm({
       client={client}
       onLanguageChange={onLanguageChange}
       spreadCount={catalog.length}
+      deckId={deckId}
     >
       <form
         id="reading-form"
@@ -118,33 +146,57 @@ export function SetupForm({
       >
         <fieldset className="reading-kind-switch">
           <legend>{t(language, "readingKind")}</legend>
-          {(["spread", "daily", "moon", "custom"] as const).map((kind) => (
-            <label key={kind}>
-              <input
-                type="radio"
-                name="reading-kind"
-                value={kind}
-                checked={readingKind === kind}
-                onChange={() => {
-                  setReadingKind(kind);
-                  setInvalidField(undefined);
-                }}
-              />
-              <span>
-                {t(
-                  language,
-                  kind === "spread"
-                    ? "kindSpread"
-                    : kind === "daily"
-                      ? "kindDaily"
-                      : kind === "moon"
-                        ? "kindMoon"
-                        : "kindCustom",
-                )}
-              </span>
-            </label>
-          ))}
+          {(["spread", "daily", "moon", "custom"] as const)
+            .filter((kind) => deck.system === "tarot" || kind !== "moon")
+            .map((kind) => (
+              <label key={kind}>
+                <input
+                  type="radio"
+                  name="reading-kind"
+                  value={kind}
+                  checked={readingKind === kind}
+                  onChange={() => {
+                    setReadingKind(kind);
+                    setInvalidField(undefined);
+                  }}
+                />
+                <span>
+                  {t(
+                    language,
+                    kind === "spread"
+                      ? "kindSpread"
+                      : kind === "daily"
+                        ? "kindDaily"
+                        : kind === "moon"
+                          ? "kindMoon"
+                          : "kindCustom",
+                  )}
+                </span>
+              </label>
+            ))}
         </fieldset>
+        {client.target === "web" ? (
+          <div className="field field--wide deck-picker">
+            <span>{language === "ru" ? "Колода" : "Deck"}</span>
+            <ThemedSelect
+              aria-label={language === "ru" ? "Колода" : "Deck"}
+              value={deckId}
+              onValueChange={(value) => {
+                setDeckId(value as DeckId);
+                setSpreadType("three_card");
+                setReversalsEnabled(false);
+                if (readingKind === "moon") setReadingKind("spread");
+              }}
+            >
+              {DECKS.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name} · {d.size}
+                </option>
+              ))}
+            </ThemedSelect>
+            <small className="deck-description">{deck.description}</small>
+          </div>
+        ) : null}
         <label className="field field--wide">
           <span>{t(language, "question")}</span>
           <textarea
@@ -181,10 +233,29 @@ export function SetupForm({
             </ThemedSelect>
           </div>
         ) : null}
+        {client.target === "web" &&
+        deck.system === "tarot" &&
+        readingKind !== "moon" ? (
+          <label className="reversals-option">
+            <input
+              type="checkbox"
+              checked={reversalsEnabled}
+              onChange={(e) => setReversalsEnabled(e.target.checked)}
+            />
+            {language === "ru"
+              ? "Использовать перевёрнутые значения"
+              : "Use reversed meanings"}
+          </label>
+        ) : null}
         {(readingKind === "spread" || readingKind === "daily") && preview ? (
           <div className="spread-preview">
             <p id="spread-description">{preview.description}</p>
-            <PositionKey key={preview.id} language={language} names={preview.positions.map(position => position.name)} pageSize={6} />
+            <PositionKey
+              key={preview.id}
+              language={language}
+              names={preview.positions.map((position) => position.name)}
+              pageSize={6}
+            />
           </div>
         ) : null}
         {readingKind === "moon" ? (

@@ -13,6 +13,7 @@ import { ReadingBoard } from "./ReadingBoard.js";
 import { RitualStage } from "./RitualStage.js";
 import { SetupForm } from "./SetupForm.js";
 import { SiteHeader } from "./SiteHeader.js";
+import { ReadingArchive } from "./ReadingArchive.js";
 import { cutDeck, shuffleWithSeed } from "./deck-order.js";
 import { type FlipRect, prefersReducedMotion } from "./flip.js";
 import { t } from "./i18n.js";
@@ -31,7 +32,7 @@ export function DrawApp({ client }: DrawAppProps) {
   return (
     <div className="draw-app" data-surface={client.target}>
       {client.target === "web" ? <SiteHeader /> : null}
-      <DrawTable client={client} />
+      {client.target==='web'&&new URLSearchParams(location.search).get('view')==='readings'?<ReadingArchive client={client}/>:<DrawTable client={client} />}
     </div>
   );
 }

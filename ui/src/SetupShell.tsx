@@ -4,6 +4,7 @@ import { VISUAL_CARD_ASSET_BASE } from "@tarot/shared/artwork.js";
 import { t } from "./i18n.js";
 import { RitualProgress } from "./RitualProgress.js";
 import type { DrawClient, Language } from "./types.js";
+import { getDeck, type DeckId } from "@tarot/shared/decks.js";
 
 /** Page identity and responsive composition, independent of form state. */
 export function SetupShell({
@@ -11,12 +12,14 @@ export function SetupShell({
   client,
   onLanguageChange,
   spreadCount,
+  deckId = "tarot-classic",
   children,
 }: {
   language: Language;
   client: DrawClient;
   onLanguageChange(language: Language): void;
   spreadCount: number;
+  deckId?: DeckId;
   children: ReactNode;
 }) {
   return (
@@ -55,33 +58,50 @@ export function SetupShell({
       </div>
       <main className="setup-layout">
         <section className="setup-intro" aria-labelledby="setup-title">
-          <p className="setup-eyebrow">{t(language, "deckEdition")}</p>
+          <p className="setup-eyebrow">{getDeck(deckId).name}</p>
           <h1 id="setup-title">{t(language, "title")}</h1>
           <p className="setup-subtitle">{t(language, "subtitle")}</p>
           <figure className="deck-preview">
-            <div className="deck-preview__cards" aria-hidden="true">
-              {(["moon", "back", "star"] as const).map((cardId) => {
-                // Reuse the theme's artwork without duplicating it in the MCP HTML.
-                if (cardId === "back") {
-                  return <span key={cardId} className="deck-preview__back" />;
-                }
-                const source =
-                  client.target === "mcp"
-                    ? client.getPreviewImage?.(cardId)
-                    : `${VISUAL_CARD_ASSET_BASE}/${cardId}.webp`;
-                return source ? (
+            {client.target === "web" ? (
+              <div
+                className="deck-preview__cards deck-preview__cards--balanced"
+                aria-hidden="true"
+              >
+                {getDeck(deckId).preview.map((cardId) => (
                   <img
-                    key={cardId}
-                    className={`deck-preview__${cardId}`}
-                    src={source}
-                    width="512"
-                    height="768"
+                    key={`${deckId}:${cardId}`}
+                    className="deck-preview__sample"
+                    src={`${getDeck(deckId).assetBase}/${getDeck(deckId).system === "playing" ? "" : "mcp/"}${cardId}.webp?v=classic-20261020`}
+                    width="400"
+                    height="650"
                     alt=""
                   />
-                ) : null;
-              })}
-            </div>
-            <figcaption>{t(language, "deckPreview")}</figcaption>
+                ))}
+              </div>
+            ) : (
+              <div className="deck-preview__cards" aria-hidden="true">
+                {(["moon", "back", "star"] as const).map((cardId) => {
+                  // Reuse the theme's artwork without duplicating it in the MCP HTML.
+                  if (cardId === "back") {
+                    return <span key={cardId} className="deck-preview__back" />;
+                  }
+                  const source =
+                    client.target === "mcp"
+                      ? client.getPreviewImage?.(cardId)
+                      : `${VISUAL_CARD_ASSET_BASE}/${cardId}.webp?v=classic-20261020`;
+                  return source ? (
+                    <img
+                      key={cardId}
+                      className={`deck-preview__${cardId}`}
+                      src={source}
+                      width="512"
+                      height="768"
+                      alt=""
+                    />
+                  ) : null;
+                })}
+              </div>
+            )}
           </figure>
         </section>
         <section className="setup-panel" aria-labelledby="form-title">

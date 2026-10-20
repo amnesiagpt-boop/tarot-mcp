@@ -212,9 +212,17 @@ export function createWebClient(): DrawClient {
       input: BeginReadingInput,
       options,
     ): Promise<BeginReadingPayload> {
+      const table = Boolean(input.deckId) && input.readingKind !== "moon";
+      const {
+        deckId: _deck,
+        reversalsEnabled: _reversed,
+        tablePositions: _positions,
+        tableSpreadName: _name,
+        ...legacy
+      } = input;
       const result = await postJson(
         "/api/visual-readings",
-        input,
+        table ? input : legacy,
         options?.signal,
       );
       const payload = normalizeBeginPayload(result, input);
@@ -240,9 +248,23 @@ export function createWebClient(): DrawClient {
             { selectedSlotIds },
             options?.signal,
           );
-      return normalizeConfirmedReading(result, starts.get(drawId));
+      const reading = normalizeConfirmedReading(result, starts.get(drawId));
+      if (!drawId.startsWith("table_") && starts.get(drawId)?.deckId) {
+        reading.interpretation = reading.cards
+          .map(
+            (card, i) =>
+              `### ${i + 1}. ${card.position ?? ""} — ${card.displayName}\n\n${card.meaning ?? ""}\n\n${card.positionMeaning ?? ""}`,
+          )
+          .join("\n\n");
+      }
+      return reading;
     },
     async resolveImage(card: ReadingCard): Promise<string | undefined> {
+      if (card.imageUri?.includes("/midnight-art-nouveau-v1/"))
+        return (
+          card.imageUri.split("?")[0].replace("/mcp/", "/") +
+          "?v=classic-20261020"
+        );
       return card.imageUri;
     },
   };

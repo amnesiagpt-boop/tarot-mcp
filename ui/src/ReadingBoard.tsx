@@ -17,6 +17,7 @@ import type {
 } from "./types.js";
 import { useCardImage } from "./useCardImage.js";
 import { FullscreenNotice, useFullscreen } from "./useFullscreen.js";
+import { hasReading, saveReading } from "./reading-archive.js";
 
 const REVEAL_STAGGER = 90;
 
@@ -126,6 +127,15 @@ export function ReadingBoard({
     revealed: new Set(initialRevealedIndices),
   }));
   const [revealingAll, setRevealingAll] = useState(false);
+  const [saved, setSaved] = useState(false),
+    [saving, setSaving] = useState(false),
+    [saveNotice, setSaveNotice] = useState("");
+  useEffect(() => {
+    if (client.target === "web")
+      void hasReading(reading)
+        .then(setSaved)
+        .catch(() => undefined);
+  }, [client.target, reading]);
   const [continuation, setContinuation] = useState<Continuation>(() => ({
     status: initialContinuationSent ? "sent" : "idle",
   }));
@@ -187,7 +197,10 @@ export function ReadingBoard({
   }, [allRevealed, continuation.status]);
 
   const openDetails = (index: number) => {
-    detailOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    detailOpener.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     readingScroll.current = document.documentElement.scrollTop;
     if (client.target === "web") {
       const url = new URL(location.href);
@@ -198,14 +211,20 @@ export function ReadingBoard({
   };
   const closeDetails = useCallback(() => {
     setDetailIndex(undefined);
-    if (client.target === "web" && new URL(location.href).searchParams.has("card")) history.back();
+    if (
+      client.target === "web" &&
+      new URL(location.href).searchParams.has("card")
+    )
+      history.back();
   }, [client.target]);
   useEffect(() => {
     if (client.target !== "web") return;
     const restore = () => {
       const value = new URL(location.href).searchParams.get("card");
       const index = value ? Number(value) - 1 : -1;
-      setDetailIndex(Number.isInteger(index) && revealed.has(index) ? index : undefined);
+      setDetailIndex(
+        Number.isInteger(index) && revealed.has(index) ? index : undefined,
+      );
     };
     window.addEventListener("popstate", restore);
     return () => window.removeEventListener("popstate", restore);
@@ -347,171 +366,232 @@ export function ReadingBoard({
       continuation.status === "sending");
 
   return (
-    <><main className="reading-shell" data-expanded={allRevealed} hidden={detailIndex !== undefined}>
-      <RitualProgress
-        current={allRevealed ? "interpret" : "reveal"}
-        language={language}
-      />
-      <header className="reading-header">
-        <div>
-          <p className="spread-label">{reading.spreadName}</p>
-          <h1 ref={heading} tabIndex={-1}>
-            {t(language, "revealTitle")}
-          </h1>
-          {reading.question ? <p>{reading.question}</p> : null}
-        </div>
-        <div className="reading-actions">
-          {fullscreen.available ? (
-            <button
-              className="text-action"
-              type="button"
-              onClick={fullscreen.request}
-              disabled={fullscreen.requesting}
-            >
-              {t(language, "fullscreen")}
-            </button>
-          ) : null}
-          <button className="text-action" type="button" onClick={onRestart}>
-            {t(language, "restart")}
-          </button>
-        </div>
-      </header>
-
-      <ReadingCloth label={reading.spreadName} cardCount={reading.cards.length}>
-        {reading.cards.map((card, index) => (
-          <ClothSlot
-            key={`${card.id}-${index}`}
-            point={layout[index]}
-            index={index}
-          >
-            <ReadingCardView
-              card={card}
-              client={client}
-              cardIndex={index}
-              backImageUri={backImageUri}
-              revealed={revealed.has(index)}
-              onOpen={() => openDetails(index)}
-              onTurn={() => turn(index)}
-              language={language}
-            />
-            <span className="slot-caption">
-              {card.position ?? `#${index + 1}`}
-            </span>
-          </ClothSlot>
-        ))}
-      </ReadingCloth>
-      <PositionKey
-        pageSize={client.target === "web" ? 12 : undefined}
-        activeIndex={announced}
-        language={language}
-        names={positions.map(({ name }) => name)}
-        values={positions.map(({ value }) => value)}
-        actions={positions.map(({ action }) => action)}
-      />
-
-      <p className="sr-only" role="status" aria-atomic="true">
-        {announcement}
-      </p>
-      {fullscreen.failure !== undefined ? (
-        <FullscreenNotice detail={fullscreen.failure} language={language} />
-      ) : null}
-      {!allRevealed ? (
-        <div className="reveal-toolbar" aria-busy={revealingAll}>
-          <span>{`${revealedCount} / ${reading.cards.length}`}</span>
+    <>
+      <main
+        className="reading-shell"
+        data-expanded={allRevealed}
+        hidden={detailIndex !== undefined}
+      >
+        <RitualProgress
+          current={allRevealed ? "interpret" : "reveal"}
+          language={language}
+        />
+        <header className="reading-header">
           <div>
-            <button
-              className="primary-action"
-              type="button"
-              onClick={revealNext}
-              disabled={revealingAll}
-            >
-              {t(language, "revealNext")}
-            </button>
-            <button
-              className="text-action"
-              type="button"
-              onClick={revealAll}
-              disabled={revealingAll}
-            >
-              {t(language, "revealAll")}
-            </button>
+            <p className="spread-label">{reading.spreadName}</p>
+            <h1 ref={heading} tabIndex={-1}>
+              {t(language, "revealTitle")}
+            </h1>
+            {reading.question ? <p>{reading.question}</p> : null}
           </div>
-        </div>
-      ) : null}
-
-      {allRevealed ? (
-        <section
-          className="interpretation-panel"
-          aria-labelledby="interpretation-title"
-        >
-          <h2
-            id="interpretation-title"
-            ref={interpretationHeading}
-            tabIndex={-1}
-          >
-            {t(language, "interpretation")}
-          </h2>
-          <p>{t(language, "allRevealed")}</p>
-          {continueReading ? (
-            <>
-              <div role="status">
-                {continuationMessage ? <p>{continuationMessage}</p> : null}
-              </div>
-              {continuation.status === "idle" ||
-              continuation.status === "sending" ||
-              continuation.status === "queued" ? (
-                <p>
+          <div className="reading-actions">
+            {client.target === "web" ? (
+              <>
+                <a className="text-action" href="/draw/?view=readings">
+                  {language === "ru" ? "Мои расклады" : "My readings"}
+                </a>
+                {allRevealed ? (
                   <button
                     className="primary-action"
-                    type="button"
-                    onClick={requestInterpretation}
-                    disabled={continuation.status === "sending"}
-                    aria-busy={continuation.status === "sending"}
+                    disabled={saved || saving}
+                    onClick={async () => {
+                      setSaving(true);
+                      try {
+                        await saveReading(reading);
+                        setSaved(true);
+                        setSaveNotice(
+                          language === "ru"
+                            ? "Расклад сохранён в «Мои расклады»."
+                            : "Reading saved.",
+                        );
+                      } catch {
+                        setSaveNotice(
+                          language === "ru"
+                            ? "Не удалось сохранить расклад. Проверь доступное место и разрешения браузера."
+                            : "Could not save this reading.",
+                        );
+                      } finally {
+                        setSaving(false);
+                      }
+                    }}
                   >
-                    {t(
-                      language,
-                      continuation.status === "queued"
-                        ? "interpretAgain"
-                        : "interpretInChat",
-                    )}
+                    {saved
+                      ? language === "ru"
+                        ? "Сохранено ✓"
+                        : "Saved ✓"
+                      : saving
+                        ? language === "ru"
+                          ? "Сохраняем…"
+                          : "Saving…"
+                        : language === "ru"
+                          ? "Сохранить расклад"
+                          : "Save reading"}
                   </button>
-                </p>
-              ) : null}
-              {continuation.status === "failed" ? (
-                <div className="error-banner" role="alert">
-                  <div>
-                    <strong>{t(language, "interpretationFailed")}</strong>
-                    {continuation.detail ? (
-                      <span>
-                        {errorCopy({ message: continuation.detail }, language)}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="error-banner__actions">
-                    <button type="button" onClick={requestInterpretation}>
-                      {t(language, "tryAgain")}
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          ) : null}
-          {reading.interpretation ? (
-            <ReadingInterpretation text={reading.interpretation} />
-          ) : showInterpretationFallback ? (
-            <p>
-              {t(
-                language,
-                client.target === "web"
-                  ? "noWebInterpretation"
-                  : "noInterpretation",
-              )}
-            </p>
-          ) : null}
-        </section>
-      ) : null}
+                ) : null}
+              </>
+            ) : null}
+            {fullscreen.available ? (
+              <button
+                className="text-action"
+                type="button"
+                onClick={fullscreen.request}
+                disabled={fullscreen.requesting}
+              >
+                {t(language, "fullscreen")}
+              </button>
+            ) : null}
+            <button className="text-action" type="button" onClick={onRestart}>
+              {t(language, "restart")}
+            </button>
+          </div>
+        </header>
 
-    </main>
+        <ReadingCloth
+          label={reading.spreadName}
+          cardCount={reading.cards.length}
+        >
+          {reading.cards.map((card, index) => (
+            <ClothSlot
+              key={`${card.id}-${index}`}
+              point={layout[index]}
+              index={index}
+            >
+              <ReadingCardView
+                card={card}
+                client={client}
+                cardIndex={index}
+                backImageUri={backImageUri}
+                revealed={revealed.has(index)}
+                onOpen={() => openDetails(index)}
+                onTurn={() => turn(index)}
+                language={language}
+              />
+              <span className="slot-caption">
+                {card.position ?? `#${index + 1}`}
+              </span>
+            </ClothSlot>
+          ))}
+        </ReadingCloth>
+        <PositionKey
+          pageSize={client.target === "web" ? 12 : undefined}
+          activeIndex={announced}
+          language={language}
+          names={positions.map(({ name }) => name)}
+          values={positions.map(({ value }) => value)}
+          actions={positions.map(({ action }) => action)}
+        />
+
+        <p className="sr-only" role="status" aria-atomic="true">
+          {announcement}
+        </p>
+        {fullscreen.failure !== undefined ? (
+          <FullscreenNotice detail={fullscreen.failure} language={language} />
+        ) : null}
+        {!allRevealed ? (
+          <div className="reveal-toolbar" aria-busy={revealingAll}>
+            <span>{`${revealedCount} / ${reading.cards.length}`}</span>
+            <div>
+              <button
+                className="primary-action"
+                type="button"
+                onClick={revealNext}
+                disabled={revealingAll}
+              >
+                {t(language, "revealNext")}
+              </button>
+              <button
+                className="text-action"
+                type="button"
+                onClick={revealAll}
+                disabled={revealingAll}
+              >
+                {t(language, "revealAll")}
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {allRevealed ? (
+          <section
+            className="interpretation-panel"
+            aria-labelledby="interpretation-title"
+          >
+          {saveNotice ? <p role="status">{saveNotice}</p> : null}
+            <p className="reading-reference-note">
+              {language === "ru"
+                ? "Справочные символические значения. ИИ пока не подключён. Карты не устанавливают мысли другого человека и не гарантируют события."
+                : "Reference meanings. AI is not connected; cards do not establish other people’s thoughts or guarantee events."}
+            </p>
+            <h2
+              id="interpretation-title"
+              ref={interpretationHeading}
+              tabIndex={-1}
+            >
+              {t(language, "interpretation")}
+            </h2>
+            <p>{t(language, "allRevealed")}</p>
+            {continueReading ? (
+              <>
+                <div role="status">
+                  {continuationMessage ? <p>{continuationMessage}</p> : null}
+                </div>
+                {continuation.status === "idle" ||
+                continuation.status === "sending" ||
+                continuation.status === "queued" ? (
+                  <p>
+                    <button
+                      className="primary-action"
+                      type="button"
+                      onClick={requestInterpretation}
+                      disabled={continuation.status === "sending"}
+                      aria-busy={continuation.status === "sending"}
+                    >
+                      {t(
+                        language,
+                        continuation.status === "queued"
+                          ? "interpretAgain"
+                          : "interpretInChat",
+                      )}
+                    </button>
+                  </p>
+                ) : null}
+                {continuation.status === "failed" ? (
+                  <div className="error-banner" role="alert">
+                    <div>
+                      <strong>{t(language, "interpretationFailed")}</strong>
+                      {continuation.detail ? (
+                        <span>
+                          {errorCopy(
+                            { message: continuation.detail },
+                            language,
+                          )}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="error-banner__actions">
+                      <button type="button" onClick={requestInterpretation}>
+                        {t(language, "tryAgain")}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+            {reading.interpretation ? (
+              <ReadingInterpretation text={reading.interpretation} />
+            ) : showInterpretationFallback ? (
+              <p>
+                {t(
+                  language,
+                  client.target === "web"
+                    ? "noWebInterpretation"
+                    : "noInterpretation",
+                )}
+              </p>
+            ) : null}
+          </section>
+        ) : null}
+      </main>
       {detailIndex !== undefined ? (
         <CardDetails
           card={reading.cards[detailIndex]}

@@ -3,7 +3,6 @@ import { TarotCardManager } from "../cards/card-manager.js";
 import { TarotDomainError } from "../shared/errors.js";
 import { pick } from "../shared/i18n.js";
 import { CardOrientation, Language, TarotSpread } from "../shared/types.js";
-import { randomOrientation } from "../shared/utils.js";
 import {
   PerformedReading,
   ReadingPayload,
@@ -167,7 +166,7 @@ export class VisualDrawManager {
   ) {
     this.now = options.now ?? Date.now;
     this.randomUuid = options.randomUuid ?? randomUUID;
-    this.drawOrientation = options.drawOrientation ?? randomOrientation;
+    this.drawOrientation = options.drawOrientation ?? (() => "upright");
     this.pendingTtlMs =
       options.pendingTtlMs ?? VisualDrawManager.DEFAULT_PENDING_TTL_MS;
     this.retentionTtlMs =
