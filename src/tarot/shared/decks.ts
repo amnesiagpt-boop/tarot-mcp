@@ -68,7 +68,7 @@ export function cardImage(deckId: DeckId, cardId: string): string {
     "/" +
     (deck.system === "playing" ? "playing_" : "") +
     cardId +
-    ".webp?v=classic-20261020"
+    ".webp?v=modern-20261020"
   );
 }
 const MAJORS = [

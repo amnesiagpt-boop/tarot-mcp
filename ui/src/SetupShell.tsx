@@ -71,7 +71,7 @@ export function SetupShell({
                   <img
                     key={`${deckId}:${cardId}`}
                     className="deck-preview__sample"
-                    src={`${getDeck(deckId).assetBase}/${cardId}.webp?v=classic-20261020`}
+                    src={`${getDeck(deckId).assetBase}/${cardId}.webp?v=modern-20261020`}
                     width="400"
                     height="650"
                     alt=""
@@ -88,7 +88,7 @@ export function SetupShell({
                   const source =
                     client.target === "mcp"
                       ? client.getPreviewImage?.(cardId)
-                      : `${VISUAL_CARD_ASSET_BASE}/${cardId}.webp?v=classic-20261020`;
+                      : `${VISUAL_CARD_ASSET_BASE}/${cardId}.webp?v=modern-20261020`;
                   return source ? (
                     <img
                       key={cardId}
@@ -103,6 +103,12 @@ export function SetupShell({
               </div>
             )}
           </figure>
+          <a
+            className="artwork-credit-link"
+            href={client.target === "web" ? "/?page=art-credits" : "https://github.com/mixvlad/TarotCards/blob/840b84d012c6b74dc1634fa2d00d1b21f5b28093/tarot/soimoi/LICENSE"}
+          >
+            {client.target !== "web" ? "Soimoi Tarot · Mike Koz · CC BY 4.0" : language === "ru" ? "Об иллюстрациях" : language === "zh" ? "插图来源" : "Artwork credits"}
+          </a>
         </section>
         <section className="setup-panel" aria-labelledby="form-title">
           <div className="setup-panel__heading">

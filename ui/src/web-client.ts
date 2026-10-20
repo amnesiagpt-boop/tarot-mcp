@@ -263,7 +263,7 @@ export function createWebClient(): DrawClient {
       if (card.imageUri?.includes("/midnight-art-nouveau-v1/"))
         return (
           card.imageUri.split("?")[0].replace("/mcp/", "/") +
-          "?v=classic-20261020"
+          "?v=modern-20261020"
         );
       return card.imageUri;
     },

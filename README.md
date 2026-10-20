@@ -178,3 +178,10 @@ src/table contains validated opaque draws, idempotent confirmation and independe
 Verified: TypeScript and both UI builds; 141 UI tests and 11 new server/static-asset tests; four full browser reading flows and a 17-entry archive. Windows Chromium was used; native macOS Safari remains untested.
 
 Card layout correction (20 October 2026): larger full-resolution deck previews align with the setup form; revealed faces keep native image proportions without side or top padding, with the Russian caption below. Sparse mobile readings retain captions and keep edge cards inside the cloth. Both UI builds and141 UI tests passed; geometry was checked across six viewport sizes in the integrated site.
+
+
+## Modern Tarot artwork (20 October 2026)
+
+The active 78 Tarot faces are now Soimoi Tarot by Mike Koz, CC BY 4.0, replacing the RWS scans at the stable compatibility paths. The drawings were created by their author with a generative image model. See assets/cards/soimoi-v1/LICENSE.txt and README.md, plus assets/modern-decks-manifest.json for pinned per-card provenance, native dimensions and hashes. Full-resolution WebP conversion and separate thumbnails only; no retouching, cropping or upscaling. The card system, meanings, animations and minimal rose back are preserved.
+
+Lenormand art replacement is still pending access to a complete modern licensed archive; its 36 historical BnF faces have not been described as replaced. Playing cards remain unchanged.

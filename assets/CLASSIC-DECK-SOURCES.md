@@ -1,4 +1,6 @@
-# Active classic card illustrations
+# Historical classic card import
+
+**Current Tarot faces have been replaced with Soimoi Tarot.** See modern-decks-manifest.json and cards/soimoi-v1/ for the active 78 Tarot illustrations. Lenormand and playing-card assets described below are still active. This file records the previous complete import.
 
 Imported20 October2026 for the Kod Dushi website. Each original image, its source page, licence, native dimensions, output dimensions and SHA256 are recorded in `classic-decks-manifest.json`. No image was enlarged to claim a higher scan resolution. WebP files preserve the scan's native width/height; original scans are cached locally for reproducibility. SVG playing-card originals remain vectors.
 
