@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createClientUuid } from "./client-uuid.js";
 import type { SetStateAction } from "react";
 import { assertCompleteVisualDeck, extractError } from "./normalize.js";
 import { restoreUiSnapshot } from "./ui-state.js";
@@ -194,7 +195,7 @@ export function useDrawSession(client: DrawClient) {
       signal?.throwIfAborted();
       const savedInput: BeginReadingInput = {
         ...structuredClone(input),
-        idempotencyKey: input.idempotencyKey ?? crypto.randomUUID(),
+        idempotencyKey: input.idempotencyKey ?? createClientUuid(),
       };
       const controller = new AbortController();
       const abort = () => controller.abort(signal?.reason);
