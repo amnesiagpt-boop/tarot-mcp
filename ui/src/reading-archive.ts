@@ -1,4 +1,5 @@
 import type { ConfirmedReading, ReadingCard } from "./types.js";
+import { createClientUuid } from "./client-uuid.js";
 import {
   canonicalTarotId,
   cardImage,
@@ -236,7 +237,7 @@ export async function importReadings(value: unknown): Promise<number> {
       if (!r || typeof r !== "object")
         throw new Error("В файле есть некорректная запись расклада.");
       return {
-        id: typeof r.id === "string" ? r.id : crypto.randomUUID(),
+        id: typeof r.id === "string" ? r.id : createClientUuid(),
         savedAt:
           typeof r.savedAt === "string" ? r.savedAt : new Date().toISOString(),
         reading: archiveSnapshot(r.reading),
