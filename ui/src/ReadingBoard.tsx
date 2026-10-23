@@ -3,6 +3,7 @@ import { CardDetails } from "./CardDetails.js";
 import { ClothSlot, ReadingCloth } from "./ReadingCloth.js";
 import { PositionKey } from "./PositionKey.js";
 import { ReadingInterpretation } from "./ReadingInterpretation.js";
+import { AiReadingPanel } from "./AiReadingPanel.js";
 import { RitualProgress } from "./RitualProgress.js";
 import { cardBackStyle } from "./card-style.js";
 import { prefersReducedMotion } from "./flip.js";
@@ -519,8 +520,8 @@ export function ReadingBoard({
           {saveNotice ? <p role="status">{saveNotice}</p> : null}
             <p className="reading-reference-note">
               {language === "ru"
-                ? "Справочные символические значения. ИИ пока не подключён. Карты не устанавливают мысли другого человека и не гарантируют события."
-                : "Reference meanings. AI is not connected; cards do not establish other people’s thoughts or guarantee events."}
+                ? "Справочные символические значения. Карты не устанавливают мысли другого человека и не гарантируют события."
+                : "Reference meanings. Cards do not establish other people’s thoughts or guarantee events."}
             </p>
             <h2
               id="interpretation-title"
@@ -588,6 +589,9 @@ export function ReadingBoard({
                     : "noInterpretation",
                 )}
               </p>
+            ) : null}
+            {client.target === "web" && reading.deckId === "tarot-classic" ? (
+              <AiReadingPanel reading={reading} />
             ) : null}
           </section>
         ) : null}
