@@ -14,3 +14,18 @@ body,.setup-shell,.draw-app{background:var(--bg);color:var(--ink)}h1,h2,h3{font-
 .deck-preview__cards .deck-preview__back{aspect-ratio:2/3;height:100%}
 @media(max-width:650px){.deck-preview__cards .deck-preview__back{height:auto}}
 .arc-fan{padding-top:0}.arc-card{top:32px}
+
+
+/* Optional GPT analysis within completed web readings. */
+.ai-reading-panel{margin-top:34px;padding:clamp(20px,3vw,36px);border:1px solid #e9bfce;border-radius:16px;background:linear-gradient(135deg,#fffafd,#f9ecf2)}
+.ai-reading-panel__eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700;color:#a54e72}
+.ai-reading-panel__intro h3{margin:8px 0 12px;font-size:clamp(22px,3vw,30px);color:#472d3d}
+.ai-reading-panel__intro p{max-width:75ch;line-height:1.6}
+.ai-reading-panel__consent{font-size:13px;color:#765969}
+.ai-reading-panel__actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.ai-reading-panel__actions button{min-height:44px;border-radius:11px;padding:10px 18px}
+.ai-reading-panel__error{color:#a13b5b}
+.ai-reading-panel__result{margin-top:18px;padding-top:18px;border-top:1px solid #e9bfce}
+.ai-reading-panel__result h4{font-size:20px;margin-bottom:16px}
+.ai-reading-panel__result .text-action{margin-top:16px}
+@media(max-width:600px){.ai-reading-panel__actions{flex-direction:column}.ai-reading-panel__actions button{width:100%}}
